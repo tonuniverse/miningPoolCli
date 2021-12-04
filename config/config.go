@@ -98,7 +98,7 @@ func Configure() {
  \__| \___/ |_| |_| \__,_||_| |_||_|  \_/   \___||_|   |___/ \___|
 	`
 
-	Texts.GPL3 = `miningPoolCli (v0.0.1-alpha) – open-source tonuniverse mining pool client
+	Texts.GPL3 = `miningPoolCli (v0.0.2-alpha) – open-source tonuniverse mining pool client
 
 Copyright (C) 2021 Alexander Gapak
 Copyright (C) 2021 Kirill Glushakov
