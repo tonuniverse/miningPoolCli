@@ -53,10 +53,8 @@ type minerLocalTaskSettings struct {
 type goMineProc struct {
 	procStdout bytes.Buffer
 	procStdErr bytes.Buffer
-	// status     bool // true - pls kill task, false - working
-	// pstatus bool
-	status chan struct{}
-	// exited  bool // false - running, true - miner exited
+	status     chan struct{}
+	deadinside bool
 	minerLocalTaskSettings
 }
 
@@ -99,26 +97,37 @@ func startMiner(goInt int) {
 	}()
 
 	procMiners[goInt].status = make(chan struct{}, 1)
-	// fmt.Println("start task")
-	select {
-	case <-procMiners[goInt].status:
-		_ = cmd.Process.Kill()
-	case <-done:
-		tasks := api.GetTasks().Tasks
-		setMinerTask(goInt, procMiners[goInt].gpuData, tasks, &procMiners)
-	}
 
 	defer func() {
+
 		// Handle panic | fix "panic: close of closed channel"
 		_ = recover()
 	}()
 
-	close(procMiners[goInt].status)
+	// fmt.Println("start task")
+	select {
+	case <-procMiners[goInt].status:
+		_ = cmd.Process.Kill()
+		close(procMiners[goInt].status)
+		return
+	case <-done:
+		procMiners[goInt].deadinside = true
+		// time.Sleep(10 * time.Second)
+		// tasks := api.GetTasks().Tasks
+		// setMinerTask(goInt, procMiners[goInt].gpuData, tasks)
+		close(done)
+		return
+	}
 }
 
-func setMinerTask(index int, gpuData gpuUtils.GPUstruct, tasks []api.Task, pm *[]goMineProc) {
-	rand.Seed(time.Now().Unix())
+func setMinerTask(index int, gpuData gpuUtils.GPUstruct, tasks []api.Task) {
+	procMiners[index].deadinside = false
 	randomTask := tasks[rand.Intn(len(tasks))]
+
+	// fmt.Println("-------- set new task --------")
+	// fmt.Println("seed: " + randomTask.Seed)
+	// fmt.Println("gpuId: " + strconv.Itoa(gpuData.GpuId))
+	// fmt.Println("-------- ------------ --------")
 
 	procMiners[index].gpuData = gpuData
 	procMiners[index].seed = randomTask.Seed
@@ -150,7 +159,7 @@ func killAndStartWithNewTask(index int, gpuData gpuUtils.GPUstruct, pm *[]goMine
 
 	// start this GPU with new task
 	tasks := api.GetTasks().Tasks
-	setMinerTask(index, gpuData, tasks, pm)
+	setMinerTask(index, gpuData, tasks)
 }
 
 func calcHashrate(goMineProcArr []goMineProc) {
@@ -194,6 +203,7 @@ func calcHashrate(goMineProcArr []goMineProc) {
 }
 
 func main() {
+	rand.Seed(time.Now().Unix())
 	helpers.InitProgram()
 	api.Auth()
 	getMiner.UbubntuGetMiner()
@@ -204,12 +214,13 @@ func main() {
 	miniLogger.LogInfo("Launching the mining processes...")
 
 	gpusCount := len(gpusArray)
+
 	procMiners = make([]goMineProc, gpusCount)
 
 	tasks := api.GetTasks()
 
 	for pCount := 0; pCount < gpusCount; pCount++ {
-		setMinerTask(pCount, gpusArray[pCount], tasks.Tasks, &procMiners)
+		setMinerTask(pCount, gpusArray[pCount], tasks.Tasks)
 	}
 
 	hashratePrintTime := time.Now().Unix()
@@ -242,7 +253,9 @@ func main() {
 
 			tMined := "mined_" + strconv.Itoa(procMiners[i].gpuData.GpuId) + ".boc"
 
+			var found bool = false
 			if helpers.StringInSlice(tMined, listArr) {
+				found = true
 				miniLogger.LogOk(
 					"Share FOUND on \"" + procMiners[i].gpuData.Model + "\" | task id: " +
 						strconv.Itoa(procMiners[i].taskServerId),
@@ -258,9 +271,20 @@ func main() {
 					miniLogger.LogFatal(err.Error())
 				}
 
+				// fmt.Println("-------- BOC SEND --------")
+				// fmt.Println("seed: " + procMiners[i].seed)
+				// fmt.Println("gpuId: " + strconv.Itoa(procMiners[i].gpuData.GpuId))
+				// fmt.Println("-------- ------------ --------")
+
 				_ = api.SendHexBocToServer(bocFileInHex, procMiners[i].seed)
 
 				killAndStartWithNewTask(i, gpusArray[i], &procMiners)
+			}
+
+			if procMiners[i].deadinside && !found {
+				tasks := api.GetTasks().Tasks
+				setMinerTask(i, procMiners[i].gpuData, tasks)
+
 			}
 		}
 
