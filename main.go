@@ -108,6 +108,11 @@ func startMiner(goInt int) {
 		setMinerTask(goInt, procMiners[goInt].gpuData, tasks, &procMiners)
 	}
 
+	defer func() {
+		// Handle panic | fix "panic: close of closed channel"
+		_ = recover()
+	}()
+
 	close(procMiners[goInt].status)
 }
 

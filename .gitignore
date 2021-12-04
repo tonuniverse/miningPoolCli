@@ -9,6 +9,10 @@
 miningPoolCli
 __miner__
 
+# --------------------- build ---------------------
+*.tar.gz
+miningPoolCli-unix-x86–64
+
 # Test binary, built with `go test -c`
 *.test
 
