@@ -1,8 +1,8 @@
 go build -o miningPoolCli main.go
-mkdir miningPoolCli-unix-x86–64
+mkdir miningPoolCli_unix_x86_64
 
-cp miningPoolCli miningPoolCli-unix-x86–64/
-cp LICENSE miningPoolCli-unix-x86–64/
-cp README.md miningPoolCli-unix-x86–64/
+cp miningPoolCli miningPoolCli_unix_x86_64/
+cp LICENSE miningPoolCli_unix_x86_64/
+cp README.md miningPoolCli_unix_x86_64/
 
-tar -zcvf miningPoolCli-unix-x86–64.tar.gz miningPoolCli-unix-x86–64/
+tar -zcvf miningPoolCli_unix_x86_64.tar.gz miningPoolCli_unix_x86_64/
