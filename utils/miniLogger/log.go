@@ -28,6 +28,8 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/go-errors/errors"
 )
 
 func colorize(message string, color string) {
@@ -57,6 +59,14 @@ func LogError(errMsg string) {
 
 func LogFatal(errMsg string) {
 	colorize(getNowTimeAsString()+"[--!--] "+"FATAL ERROR: "+errMsg, config.Colors.ColorRed)
+	os.Exit(1)
+}
+
+func LogFatalStackError(err error) {
+	colorize(
+		getNowTimeAsString()+"[--!--] "+"FATAL ERROR: "+errors.Wrap(err, 1).ErrorStack(),
+		config.Colors.ColorRed,
+	)
 	os.Exit(1)
 }
 

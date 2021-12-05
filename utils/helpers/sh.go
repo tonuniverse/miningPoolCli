@@ -22,7 +22,12 @@ along with miningPoolCli.  If not, see <https://www.gnu.org/licenses/>.
 package helpers
 
 import (
+	"archive/tar"
+	"compress/gzip"
+	"io"
+	"log"
 	"miningPoolCli/utils/miniLogger"
+	"os"
 	"os/exec"
 )
 
@@ -32,4 +37,45 @@ func ExecuteSimpleCommand(name string, arg ...string) []byte {
 		miniLogger.LogFatal("Error while executing sh: " + "\"" + name + "\"" + "; " + err.Error())
 	}
 	return stdout
+}
+
+func ExtractTarGz(gzipStream io.Reader, pathToExtarct string) {
+	uncompressedStream, err := gzip.NewReader(gzipStream)
+	if err != nil {
+		log.Fatal("ExtractTarGz: NewReader failed")
+	}
+
+	tarReader := tar.NewReader(uncompressedStream)
+
+	for {
+		header, err := tarReader.Next()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			log.Fatalf("ExtractTarGz: Next() failed: %s", err.Error())
+		}
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			if err := os.Mkdir(pathToExtarct+"/"+header.Name, 0755); err != nil {
+				log.Fatalf("ExtractTarGz: Mkdir() failed: %s", err.Error())
+			}
+		case tar.TypeReg:
+			outFile, err := os.Create(pathToExtarct + "/" + header.Name)
+			if err != nil {
+				log.Fatalf("ExtractTarGz: Create() failed: %s", err.Error())
+			}
+			if _, err := io.Copy(outFile, tarReader); err != nil {
+				log.Fatalf("ExtractTarGz: Copy() failed: %s", err.Error())
+			}
+			outFile.Close()
+
+		default:
+			miniLogger.LogFatal("ExtractTarGz: uknown type: " + string(header.Typeflag) + " in " + header.Name)
+		}
+
+	}
 }

@@ -22,37 +22,71 @@ along with miningPoolCli.  If not, see <https://www.gnu.org/licenses/>.
 package getMiner
 
 import (
+	"fmt"
+	"io/ioutil"
 	"miningPoolCli/config"
 	"miningPoolCli/utils/helpers"
 	"miningPoolCli/utils/miniLogger"
-	"strings"
+	"os"
+
+	"github.com/cavaliercoder/grab"
 )
 
-func splitLs(stdout []byte) []string {
-	return strings.Split(string(stdout), "\n")
+func getDir(path string) []string {
+	listDir, err := ioutil.ReadDir(path)
+	if err != nil {
+		miniLogger.LogFatalStackError(err)
+	}
+
+	var files []string
+	for _, file := range listDir {
+		files = append(files, file.Name())
+	}
+
+	return files
+}
+
+func removePath(strDir string) {
+	if err := os.RemoveAll(strDir); err != nil {
+		miniLogger.LogFatalStackError(err)
+	}
 }
 
 func UbubntuGetMiner() {
 	miniLogger.LogInfo("Starting to download the miner for a linux system")
 
-	if helpers.StringInSlice(config.MinerGetter.MinerDirectory, splitLs(helpers.ExecuteSimpleCommand("ls"))) {
+	if helpers.StringInSlice(config.MinerGetter.MinerDirectory, getDir(".")) {
 		miniLogger.LogInfo("\"" + config.MinerGetter.MinerDirectory + "\"" + " already exists; it will be removed")
+
+		removePath(config.MinerGetter.MinerDirectory)
 	}
 
-	helpers.ExecuteSimpleCommand("rm", "-rf", config.MinerGetter.MinerDirectory)
-	helpers.ExecuteSimpleCommand("wget", config.MinerGetter.UbuntuMinerRelUrl)
+	getFileResp, err := grab.Get(".", config.MinerGetter.UbuntuMinerRelUrl)
+	if err != nil {
+		miniLogger.LogFatalStackError(err)
+	}
 
-	if helpers.StringInSlice(config.MinerGetter.UbubntuFileName, splitLs(helpers.ExecuteSimpleCommand("ls"))) {
-		miniLogger.LogOk("Download completed \"" + config.MinerGetter.UbubntuFileName + "\"")
+	if helpers.StringInSlice(config.MinerGetter.UbubntuFileName, getDir(".")) {
+		miniLogger.LogOk("Download completed \"" + getFileResp.Filename + "\"")
 	} else {
 		miniLogger.LogFatal("Something went wrong. " + config.MinerGetter.UbubntuFileName + " not found in this catalog")
 	}
 
-	helpers.ExecuteSimpleCommand("mkdir", config.MinerGetter.MinerDirectory)
-	helpers.ExecuteSimpleCommand("tar", "-xvf", config.MinerGetter.UbubntuFileName, "-C", config.MinerGetter.MinerDirectory)
-	helpers.ExecuteSimpleCommand("rm", config.MinerGetter.UbubntuFileName)
+	if err := os.Mkdir(config.MinerGetter.MinerDirectory, 0755); err != nil {
+		miniLogger.LogFatal(err.Error())
+	}
 
-	if helpers.StringInSlice("pow-miner-opencl", splitLs(helpers.ExecuteSimpleCommand("ls", config.MinerGetter.MinerDirectory))) {
+	r, err := os.Open(config.MinerGetter.UbubntuFileName)
+	if err != nil {
+		fmt.Println(err)
+	}
+	helpers.ExtractTarGz(r, config.MinerGetter.MinerDirectory)
+
+	os.Chmod(config.MinerGetter.MinerDirectory+"/"+"pow-miner-opencl", 0700)
+
+	removePath(config.MinerGetter.UbubntuFileName)
+
+	if helpers.StringInSlice("pow-miner-opencl", getDir(config.MinerGetter.MinerDirectory)) {
 		miniLogger.LogOk("The miner is saved in the directory: " + "\"" + config.MinerGetter.MinerDirectory + "\"")
 	} else {
 		miniLogger.LogFatal("Something went wrong. Miner not found in" + "\"" + config.MinerGetter.MinerDirectory + "\"")
