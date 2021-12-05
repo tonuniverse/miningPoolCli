@@ -1,9 +1,7 @@
 /*
 miningPoolCli – open-source tonuniverse mining pool client
 
-Copyright (C) 2021 Alexander Gapak
-Copyright (C) 2021 Kirill Glushakov
-Copyright (C) 2021 Roman Klimov
+Copyright (C) 2021 tonuniverse.com
 
 This file is part of miningPoolCli.
 
@@ -100,9 +98,7 @@ func Configure() {
 
 	Texts.GPL3 = `miningPoolCli (v0.0.3-alpha) – open-source tonuniverse mining pool client
 
-Copyright (C) 2021 Alexander Gapak
-Copyright (C) 2021 Kirill Glushakov
-Copyright (C) 2021 Roman Klimov
+Copyright (C) 2021 tonuniverse.com
 
 At this time, the authors can be contacted by this email:
 contact@tonuniverse.com
