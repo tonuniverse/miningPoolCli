@@ -53,40 +53,54 @@ func removePath(strDir string) {
 }
 
 func UbubntuGetMiner() {
-	miniLogger.LogInfo("Starting to download the miner for a linux system")
+	var minerReleaseURL, minerFileName, executableName string
+
+	switch config.OS.OperatingSystem {
+	case config.OSType.Linux:
+		minerReleaseURL = config.MinerGetter.UbuntuSettings.ReleaseURL
+		minerFileName = config.MinerGetter.UbuntuSettings.FileName
+		executableName = config.MinerGetter.UbuntuSettings.ExecutableName
+	case config.OSType.Win:
+		minerReleaseURL = config.MinerGetter.WinSettings.ReleaseURL
+		minerFileName = config.MinerGetter.WinSettings.FileName
+		executableName = config.MinerGetter.WinSettings.ExecutableName
+	}
+
+	miniLogger.LogInfo("Starting to download the miner for a " + config.OS.OperatingSystem + " system")
 
 	if helpers.StringInSlice(config.MinerGetter.MinerDirectory, getDir(".")) {
 		miniLogger.LogInfo("\"" + config.MinerGetter.MinerDirectory + "\"" + " already exists; it will be removed")
-
 		removePath(config.MinerGetter.MinerDirectory)
 	}
 
-	getFileResp, err := grab.Get(".", config.MinerGetter.UbuntuMinerRelUrl)
+	getFileResp, err := grab.Get(".", minerReleaseURL)
 	if err != nil {
 		miniLogger.LogFatalStackError(err)
 	}
 
-	if helpers.StringInSlice(config.MinerGetter.UbubntuFileName, getDir(".")) {
+	if helpers.StringInSlice(minerFileName, getDir(".")) {
 		miniLogger.LogOk("Download completed \"" + getFileResp.Filename + "\"")
 	} else {
-		miniLogger.LogFatal("Something went wrong. " + config.MinerGetter.UbubntuFileName + " not found in this catalog")
+		miniLogger.LogFatal("Something went wrong. " + minerFileName + " not found in this catalog")
 	}
 
 	if err := os.Mkdir(config.MinerGetter.MinerDirectory, 0755); err != nil {
 		miniLogger.LogFatal(err.Error())
 	}
 
-	r, err := os.Open(config.MinerGetter.UbubntuFileName)
+	r, err := os.Open(minerFileName)
 	if err != nil {
 		fmt.Println(err)
 	}
 	helpers.ExtractTarGz(r, config.MinerGetter.MinerDirectory)
 
-	os.Chmod(config.MinerGetter.MinerDirectory+"/"+"pow-miner-opencl", 0700)
+	if config.OS.OperatingSystem == config.OSType.Linux {
+		os.Chmod(config.MinerGetter.MinerDirectory+"/"+executableName, 0700)
+	}
 
-	removePath(config.MinerGetter.UbubntuFileName)
+	removePath(minerFileName)
 
-	if helpers.StringInSlice("pow-miner-opencl", getDir(config.MinerGetter.MinerDirectory)) {
+	if helpers.StringInSlice(executableName, getDir(config.MinerGetter.MinerDirectory)) {
 		miniLogger.LogOk("The miner is saved in the directory: " + "\"" + config.MinerGetter.MinerDirectory + "\"")
 	} else {
 		miniLogger.LogFatal("Something went wrong. Miner not found in" + "\"" + config.MinerGetter.MinerDirectory + "\"")

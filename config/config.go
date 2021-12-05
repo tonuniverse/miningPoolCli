@@ -32,8 +32,19 @@ type colors struct {
 type texts struct {
 	Logo, GlobalHelpText, AuthKeyHelp, PoolUrlHelp, WelcomeAdditionalMsg, AuthKeyFlagError, GPL3 string
 }
+
+type ubuntuMiner struct {
+	ReleaseURL, FileName, ExecutableName string
+}
+
+type winMiner struct {
+	ReleaseURL, FileName, ExecutableName string
+}
+
 type minerGetter struct {
-	MinerDirectory, UbuntuMinerRelUrl, UbubntuFileName string
+	MinerDirectory string
+	UbuntuSettings ubuntuMiner
+	WinSettings    winMiner
 }
 
 type os struct {
@@ -54,15 +65,17 @@ type staticBeforeMinerSettings struct {
 	CheckActualInMin int
 }
 
+type osType struct {
+	Linux, Win, Macos string
+}
+
 var Colors colors
 var Texts texts
 var MinerGetter minerGetter
 var OS os
 var ServerSettings serverSettings
 var StaticBeforeMinerSettings staticBeforeMinerSettings
-
-var MiningPoolServerURL string
-var OperatingSystem string
+var OSType osType
 
 func Configure() {
 	Colors = colors{
@@ -71,12 +84,27 @@ func Configure() {
 		"\u001b[0m",
 	}
 
-	// ServerSettings.MiningPoolServerURL = ""
+	// -------- OS Types
+	OSType.Linux = "linux"
+	OSType.Win = "windows"
+	OSType.Macos = "darwin"
+	// --------
 
 	MinerGetter.MinerDirectory = "__miner__"
-	MinerGetter.UbubntuFileName = "miner-opencl-ubuntu-20.04-x86-64.tar.gz"
-	MinerGetter.UbuntuMinerRelUrl = "https://github.com/tonuniverse/pow-miner-gpu/releases/download/v0.0.1/" +
-		MinerGetter.UbubntuFileName
+
+	// -------- set Release for Ubuntu
+	MinerGetter.UbuntuSettings.FileName = "miner-opencl-ubuntu-20.04-x86-64.tar.gz"
+	MinerGetter.UbuntuSettings.ReleaseURL = "https://github.com/tonuniverse/pow-miner-gpu/releases/download/v0.0.1/" +
+		MinerGetter.UbuntuSettings.FileName
+	MinerGetter.UbuntuSettings.ExecutableName = "pow-miner-opencl"
+	// --------
+
+	// -------- set Release for Win
+	MinerGetter.WinSettings.FileName = "..."
+	MinerGetter.WinSettings.ReleaseURL = "..." +
+		MinerGetter.WinSettings.FileName
+	MinerGetter.UbuntuSettings.ExecutableName = "pow-miner-opencl.exe"
+	// --------
 
 	// -------- StaticBeforeMinerSettings
 	StaticBeforeMinerSettings.NumCPUForWFlag = runtime.NumCPU()

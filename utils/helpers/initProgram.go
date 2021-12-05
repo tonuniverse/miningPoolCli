@@ -52,11 +52,11 @@ func InitProgram() {
 
 	os, architecture := runtime.GOOS, runtime.GOARCH
 
-	if os == "windows" {
+	if os == config.OSType.Win {
 		miniLogger.LogFatal("Unsupported OS detected: " + "Windows")
-	} else if os == "darwin" {
+	} else if os == config.OSType.Macos {
 		miniLogger.LogFatal("Unsupported OS detected: " + "Mac OS")
-	} else if os == "linux" && architecture == "amd64" {
+	} else if os == config.OSType.Linux && architecture == "amd64" {
 		miniLogger.LogOk("Supported OS detected: " + os + "/" + architecture)
 	} else {
 		miniLogger.LogFatal("Unsupported OS detected: " + os + "/" + architecture)
