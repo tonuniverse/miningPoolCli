@@ -25,7 +25,9 @@ import (
 	"encoding/json"
 	"log"
 	"miningPoolCli/config"
+	"miningPoolCli/utils/miniLogger"
 	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -66,6 +68,28 @@ type GPUstruct struct {
 	PlatformId int    `json:"platform_id"`
 }
 
+func LogGpuList(gpus []GPUstruct) {
+	var gpuNames []string
+
+	for i := 0; i < len(gpus); i++ {
+		gpuNames = append(gpuNames, gpus[i].Model)
+	}
+
+	dict := make(map[string]int)
+	for _, num := range gpuNames {
+		dict[num] = dict[num] + 1
+	}
+
+	var text string
+
+	for model, count := range dict {
+		text += "x" + strconv.Itoa(count) + " " + model + "\n"
+	}
+
+	miniLogger.LogInfo("Found GPUs:")
+	miniLogger.LogInfo(text)
+}
+
 func serchGpusWithOpenCLAPI() ([]GPUstruct, error) {
 	cmd := exec.Command("./"+config.MinerGetter.MinerDirectory+"/pow-miner-opencl", "-L")
 	stdout, err := cmd.Output()
@@ -89,6 +113,10 @@ func serchGpusWithOpenCLAPI() ([]GPUstruct, error) {
 		}
 
 		gpusArray = append(gpusArray, j)
+	}
+
+	if len(gpusArray) == 0 {
+		miniLogger.LogFatal("No any GPUs found")
 	}
 
 	return gpusArray, nil

@@ -77,6 +77,8 @@ var ServerSettings serverSettings
 var StaticBeforeMinerSettings staticBeforeMinerSettings
 var OSType osType
 
+var BuildVersion string
+
 func Configure() {
 	Colors = colors{
 		"\u001b[31m", "\u001b[32m",
@@ -103,7 +105,7 @@ func Configure() {
 	MinerGetter.WinSettings.FileName = "..."
 	MinerGetter.WinSettings.ReleaseURL = "..." +
 		MinerGetter.WinSettings.FileName
-	MinerGetter.UbuntuSettings.ExecutableName = "pow-miner-opencl.exe"
+	MinerGetter.WinSettings.ExecutableName = "pow-miner-opencl.exe"
 	// --------
 
 	// -------- StaticBeforeMinerSettings
@@ -115,6 +117,8 @@ func Configure() {
 	StaticBeforeMinerSettings.CheckActualInMin = 4 // How often to check the relevance of tasks in minutes
 	// --------
 
+	BuildVersion = "v0.0.4-alpha"
+
 	Texts.Logo = `
  _                                _                               
 | |                              (_)                              
@@ -124,7 +128,7 @@ func Configure() {
  \__| \___/ |_| |_| \__,_||_| |_||_|  \_/   \___||_|   |___/ \___|
 	`
 
-	Texts.GPL3 = `miningPoolCli (v0.0.3-alpha) – open-source tonuniverse mining pool client
+	Texts.GPL3 = `miningPoolCli (` + BuildVersion + `) – open-source tonuniverse mining pool client
 
 Copyright (C) 2021 tonuniverse.com
 

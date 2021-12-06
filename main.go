@@ -208,7 +208,7 @@ func main() {
 	gpusArray := gpuUtils.SearchGpus()
 
 	miniLogger.LogPass()
-	miniLogger.LogGpuList(gpusArray)
+	gpuUtils.LogGpuList(gpusArray)
 	miniLogger.LogInfo("Launching the mining processes...")
 
 	gpusCount := len(gpusArray)

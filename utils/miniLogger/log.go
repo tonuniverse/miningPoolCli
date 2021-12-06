@@ -24,9 +24,7 @@ package miniLogger
 import (
 	"fmt"
 	"miningPoolCli/config"
-	"miningPoolCli/utils/gpuUtils"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/go-errors/errors"
@@ -72,26 +70,4 @@ func LogFatalStackError(err error) {
 
 func LogPass() {
 	fmt.Println("")
-}
-
-func LogGpuList(gpus []gpuUtils.GPUstruct) {
-	var gpuNames []string
-
-	for i := 0; i < len(gpus); i++ {
-		gpuNames = append(gpuNames, gpus[i].Model)
-	}
-
-	dict := make(map[string]int)
-	for _, num := range gpuNames {
-		dict[num] = dict[num] + 1
-	}
-
-	var text string
-
-	for model, count := range dict {
-		text += "x" + strconv.Itoa(count) + " " + model + "\n"
-	}
-
-	LogInfo("Found GPUs:")
-	LogInfo(text)
 }

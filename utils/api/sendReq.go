@@ -25,6 +25,7 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
+	"miningPoolCli/config"
 	"miningPoolCli/utils/miniLogger"
 	"net/http"
 	"strconv"
@@ -42,6 +43,7 @@ func SendPostJsonReq(jsonData []byte, serverUrl string) []byte {
 	for attempts := 0; attempts < 3; attempts++ {
 		request, _ := http.NewRequest("POST", serverUrl, bytes.NewBuffer(jsonData))
 		request.Header.Set("Content-Type", "application/json; charset=UTF-8")
+		request.Header.Set("Build-Version", config.BuildVersion)
 
 		client := &http.Client{Timeout: 5 * time.Second}
 
