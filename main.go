@@ -242,7 +242,7 @@ func main() {
 
 		for i := 0; i < len(procMiners); i++ {
 			if toCheckActual {
-				if !checkTaskIsActual(tasks.Tasks, procMiners[i].taskServerId) {
+				if !checkTaskIsActual(tasks.Tasks, procMiners[i].taskServerId) && !procMiners[i].deadinside {
 					// The task is no longer relevant
 					killAndStartWithNewTask(i, gpusArray[i], &procMiners)
 					continue
@@ -254,10 +254,6 @@ func main() {
 			var found bool = false
 			if helpers.StringInSlice(tMined, listArr) {
 				found = true
-				miniLogger.LogOk(
-					"Share FOUND on \"" + procMiners[i].gpuData.Model + "\" | task id: " +
-						strconv.Itoa(procMiners[i].taskServerId),
-				)
 
 				pathToBocFile := config.MinerGetter.MinerDirectory + "/" + tMined
 
@@ -274,7 +270,25 @@ func main() {
 				// fmt.Println("gpuId: " + strconv.Itoa(procMiners[i].gpuData.GpuId))
 				// fmt.Println("-------- ------------ --------")
 
-				_ = api.SendHexBocToServer(bocFileInHex, procMiners[i].seed)
+				bocServerResp := api.SendHexBocToServer(bocFileInHex, procMiners[i].seed)
+				if bocServerResp.Data != "Found" || bocServerResp.Status != "ok" {
+					miniLogger.LogPass()
+					miniLogger.LogError("Share found but server didn't accept it")
+					miniLogger.LogError("----- Server error response for task with id " + strconv.Itoa(procMiners[i].taskServerId) + ":")
+					miniLogger.LogError("-Status: " + bocServerResp.Status)
+					miniLogger.LogError("-Data: " + bocServerResp.Data)
+					miniLogger.LogError("-Hash: " + bocServerResp.Hash)
+					miniLogger.LogError("-Complexity: " + bocServerResp.Complexity)
+					miniLogger.LogError("----- Local data")
+					miniLogger.LogError("-Seed: " + procMiners[i].seed)
+					miniLogger.LogError("-Complexity: " + procMiners[i].complexity)
+					miniLogger.LogPass()
+				} else {
+					miniLogger.LogOk(
+						"Share FOUND on \"" + procMiners[i].gpuData.Model + "\" | task id: " +
+							strconv.Itoa(procMiners[i].taskServerId),
+					)
+				}
 
 				killAndStartWithNewTask(i, gpusArray[i], &procMiners)
 			}
@@ -282,10 +296,9 @@ func main() {
 			if procMiners[i].deadinside && !found {
 				tasks := api.GetTasks().Tasks
 				setMinerTask(i, procMiners[i].gpuData, tasks)
-
 			}
 		}
 
-		time.Sleep(1 * time.Second)
+		time.Sleep(500 * time.Microsecond)
 	}
 }

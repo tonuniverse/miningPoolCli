@@ -99,7 +99,13 @@ func GetTasks() GetTasksResponse {
 	return results
 }
 
-func SendHexBocToServer(hexData string, seed string) []byte {
+type SendHexBocToServerResponse struct {
+	ServerResponse
+	Hash       string `json:"hash"`
+	Complexity string `json:"complexity"`
+}
+
+func SendHexBocToServer(hexData string, seed string) SendHexBocToServerResponse {
 	jsonData, _ := json.Marshal(map[string]string{
 		"hexData":    hexData,
 		"dataSource": "minerClient",
@@ -113,5 +119,10 @@ func SendHexBocToServer(hexData string, seed string) []byte {
 		config.ServerSettings.MiningPoolServerURL+"/boc",
 	)
 
-	return bodyResp
+	var results SendHexBocToServerResponse
+	if err := json.Unmarshal(bodyResp, &results); err != nil {
+		miniLogger.LogFatalStackError(err)
+	}
+
+	return results
 }
