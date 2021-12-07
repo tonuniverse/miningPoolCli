@@ -1,8 +1,10 @@
+BUILD_VERSION="v1.0.3-beta"
+FOLDER="miningPoolCli-${BUILD_VERSION}-unix-x86-64"
+TAR_NAME="${FOLDER}.tar.gz"
+
 go build -o miningPoolCli main.go
-mkdir miningPoolCli_unix_x86_64
 
-cp miningPoolCli miningPoolCli_unix_x86_64/
-cp LICENSE miningPoolCli_unix_x86_64/
-cp README.md miningPoolCli_unix_x86_64/
-
-tar -zcvf miningPoolCli_unix_x86_64.tar.gz miningPoolCli_unix_x86_64/
+mkdir $FOLDER
+cp miningPoolCli LICENSE README.md $FOLDER
+tar -zcvf $TAR_NAME $FOLDER
+rm -rf $FOLDER
