@@ -1,4 +1,4 @@
-## miningPoolCli (beta version)
+## miningPoolCli
 
 Open-source mining pool client
 
@@ -27,16 +27,16 @@ Run `./miningPoolCli` with flags:
 
   ---------------------------------------------------
 
-  -auth-key string
+  -pool-id string
 
-	Example: -auth-key=gwhUUnLp0F5YZu6qanJHRl3SzoTrBq1
+	Example: -pool-id=904f935185ef96c1ab4daf11e5d84b22
 	Key for authorization in the mining pool.
 
   ---------------------------------------------------
 
   -url string
 
-	Example: -url=http://192.0.0.1:8000
+	Example: -url=https://pool.tonuniverse.com
 	Mining pool API url. (default "https://pool.tonuniverse.com")
 
   ---------------------------------------------------

@@ -1,4 +1,4 @@
-BUILD_VERSION="v1.0.3-beta"
+BUILD_VERSION="v1.0.1"
 FOLDER="miningPoolCli-${BUILD_VERSION}-unix-x86-64"
 TAR_NAME="${FOLDER}.tar.gz"
 

@@ -40,13 +40,13 @@ func InitProgram() []gpuUtils.GPUstruct {
 		fmt.Fprintf(os.Stderr, config.Texts.GlobalHelpText)
 	}
 
-	flag.StringVar(&config.ServerSettings.AuthKey, "auth-key", "", "")
+	flag.StringVar(&config.ServerSettings.AuthKey, "pool-id", "", "")
 	flag.StringVar(&config.ServerSettings.MiningPoolServerURL, "url", "https://pool.tonuniverse.com", "")
 	flag.Parse()
 
 	switch "" {
 	case config.ServerSettings.AuthKey:
-		miniLogger.LogFatal("Flag -auth-key is required; for help run with -h flag")
+		miniLogger.LogFatal("Flag -pool-id is required; for help run with -h flag")
 	}
 
 	miniLogger.LogText(config.Texts.Logo)

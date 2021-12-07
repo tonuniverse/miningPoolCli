@@ -115,7 +115,7 @@ func Configure() {
 	StaticBeforeMinerSettings.TimeoutT = 256
 	// --------
 
-	BuildVersion = "v1.0.3-beta"
+	BuildVersion = "v1.0.1"
 
 	Texts.Logo = `
  _                                _                               
@@ -146,16 +146,16 @@ under certain conditions; read LICENSE for details.`
 Usage of ./miningPoolCli (Read more at tonuniverse.com):
   ---------------------------------------------------
 
-  -auth-key string
+  -pool-id string
 
-	Example: -auth-key=gwhUUnLp0F5YZu6qanJHRl3SzoTrBq1
-	Key for authorization in the mining pool.
+	Example: -pool-id=904f935185ef96c1ab4daf11e5d84b22
+	A unique identifier of a pool participant.
 
   ---------------------------------------------------
 
   -url string
   
-	Example: -url=http://192.0.0.1:8000
+	Example: -url=https://pool.tonuniverse.com
 	Mining pool API url. (default "https://pool.tonuniverse.com")
 
   ---------------------------------------------------

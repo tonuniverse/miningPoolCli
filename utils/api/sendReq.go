@@ -23,7 +23,7 @@ package api
 
 import (
 	"bytes"
-	"io"
+	"crypto/tls"
 	"io/ioutil"
 	"miningPoolCli/config"
 	"miningPoolCli/utils/miniLogger"
@@ -41,11 +41,15 @@ type ServerResponse struct {
 func SendPostJsonReq(jsonData []byte, serverUrl string) []byte {
 	var body []byte = nil
 	for attempts := 0; attempts < 5; attempts++ {
+
 		request, _ := http.NewRequest("POST", serverUrl, bytes.NewBuffer(jsonData))
 		request.Header.Set("Content-Type", "application/json; charset=UTF-8")
 		request.Header.Set("Build-Version", config.BuildVersion)
 
-		client := &http.Client{Timeout: 2 * time.Second}
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		client := &http.Client{Timeout: 2 * time.Second, Transport: tr}
 
 		response, err := client.Do(request)
 		if err != nil {
@@ -55,12 +59,12 @@ func SendPostJsonReq(jsonData []byte, serverUrl string) []byte {
 			miniLogger.LogInfo("Attempting to retry the request... [" + strconv.Itoa(attempts+1) + "/" + "3]")
 			continue
 		}
-		defer func(Body io.ReadCloser) {
-			err := Body.Close()
+		defer func() {
+			err := response.Body.Close()
 			if err != nil {
-				miniLogger.LogFatal(err.Error())
+				miniLogger.LogFatalStackError(err)
 			}
-		}(response.Body)
+		}()
 
 		body, _ = ioutil.ReadAll(response.Body)
 		if attempts > 0 {
