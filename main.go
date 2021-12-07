@@ -19,8 +19,8 @@ import (
 )
 
 type gpuGoroutine struct {
-	gpuData        gpuUtils.GPUstruct
-	startTimestamp int64
+	gpuData gpuUtils.GPUstruct
+	// startTimestamp int64
 
 	procStdout bytes.Buffer
 }
@@ -29,7 +29,7 @@ var gpuGoroutines []gpuGoroutine
 var globalTasks []api.Task
 
 func startTask(i int, task api.Task) {
-	gpuGoroutines[i].startTimestamp = time.Now().Unix()
+	// gpuGoroutines[i].startTimestamp = time.Now().Unix()
 
 	mineResultFilename := "mined_" + strconv.Itoa(task.Id) + ".boc"
 	pathToBoc := config.MinerGetter.MinerDirectory + "/" + mineResultFilename
