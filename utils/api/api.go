@@ -104,13 +104,14 @@ type SendHexBocToServerResponse struct {
 	Complexity string `json:"complexity"`
 }
 
-func SendHexBocToServer(hexData string, seed string) SendHexBocToServerResponse {
+func SendHexBocToServer(hexData string, seed string, taskId string) SendHexBocToServerResponse {
 	jsonData, _ := json.Marshal(map[string]string{
 		"hexData":    hexData,
 		"dataSource": "minerClient",
 		"token":      config.ServerSettings.AuthKey,
 		"speed":      "1",
 		"seed":       seed,
+		"id":         taskId,
 	})
 
 	bodyResp := SendPostJsonReq(

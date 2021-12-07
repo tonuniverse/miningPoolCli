@@ -115,7 +115,7 @@ func Configure() {
 	StaticBeforeMinerSettings.TimeoutT = 256
 	// --------
 
-	BuildVersion = "v1.0.1-beta"
+	BuildVersion = "v1.0.2-beta"
 
 	Texts.Logo = `
  _                                _                               

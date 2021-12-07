@@ -66,7 +66,7 @@ func startTask(i int, task api.Task) {
 			if !killedByNotActual {
 				bocFileInHex, _ := bocUtils.ReadBocFileToHex(pathToBoc)
 
-				bocServerResp := api.SendHexBocToServer(bocFileInHex, task.Seed)
+				bocServerResp := api.SendHexBocToServer(bocFileInHex, task.Seed, strconv.Itoa(task.Id))
 				if bocServerResp.Data == "Found" && bocServerResp.Status == "ok" {
 					logreport.ShareFound(gpuGoroutines[i].gpuData.Model, gpuGoroutines[i].gpuData.GpuId, task.Id)
 				} else {
