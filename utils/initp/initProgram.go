@@ -19,19 +19,21 @@ You should have received a copy of the GNU General Public License
 along with miningPoolCli.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package helpers
+package initp
 
 import (
-	_ "embed"
 	"flag"
 	"fmt"
 	"miningPoolCli/config"
+	"miningPoolCli/utils/api"
+	"miningPoolCli/utils/getMiner"
+	"miningPoolCli/utils/gpuUtils"
 	"miningPoolCli/utils/miniLogger"
 	"os"
 	"runtime"
 )
 
-func InitProgram() {
+func InitProgram() []gpuUtils.GPUstruct {
 	config.Configure()
 
 	flag.Usage = func() {
@@ -63,4 +65,15 @@ func InitProgram() {
 	}
 	miniLogger.LogInfo("Using mining pool API url: " + config.ServerSettings.MiningPoolServerURL)
 	config.OS.OperatingSystem, config.OS.Architecture = os, architecture
+
+	api.Auth()
+
+	getMiner.UbubntuGetMiner()
+	gpusArray := gpuUtils.SearchGpus()
+
+	miniLogger.LogPass()
+	gpuUtils.LogGpuList(gpusArray)
+	miniLogger.LogInfo("Launching the mining processes...")
+
+	return gpusArray
 }

@@ -71,15 +71,14 @@ func Auth() {
 }
 
 type Task struct {
-	Id            int    `json:"id"`
-	Seed          string `json:"seed"`
-	NewComplexity string `json:"new_complexity"`
-	Giver         string `json:"address"`
+	Id         int    `json:"id"`
+	Seed       string `json:"seed"`
+	Complexity string `json:"new_complexity"`
+	Giver      string `json:"address"`
 }
 
 type GetTasksResponse struct {
 	Tasks []Task `json:"tasks"`
-	Found int    `json:"found"`
 	ServerResponse
 }
 
