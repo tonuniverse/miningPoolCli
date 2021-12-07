@@ -146,9 +146,8 @@ func calcHashrate(gpus []gpuGoroutine) {
 		if len(hS) < 4 {
 			return
 		}
-		lastH := hS[len(hS)-2]
 
-		sep := strings.Split(lastH, ".")
+		sep := strings.Split(hS[len(hS)-2], ".")
 		if len(sep) != 2 {
 			return
 		}
@@ -162,7 +161,6 @@ func calcHashrate(gpus []gpuGoroutine) {
 	}
 
 	miniLogger.LogInfo("Total hashrate: ~" + strconv.Itoa(totalHashRate) + " Mh")
-
 }
 
 func main() {
