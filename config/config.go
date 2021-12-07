@@ -56,13 +56,12 @@ type serverSettings struct {
 }
 
 type staticBeforeMinerSettings struct {
-	NumCPUForWFlag   int
-	PlatformID       int
-	BoostFactor      int
-	TimeoutT         int
-	Iterations       string
-	PoolAddress      string
-	CheckActualInMin int
+	NumCPUForWFlag int
+	PlatformID     int
+	BoostFactor    int
+	TimeoutT       int
+	Iterations     string
+	PoolAddress    string
 }
 
 type osType struct {
@@ -111,15 +110,12 @@ func Configure() {
 	// -------- StaticBeforeMinerSettings
 	StaticBeforeMinerSettings.NumCPUForWFlag = runtime.NumCPU()
 	StaticBeforeMinerSettings.PlatformID = 0
-	// StaticBeforeMinerSettings.BoostFactor = 32
 	StaticBeforeMinerSettings.BoostFactor = 32
-	// StaticBeforeMinerSettings.Iterations = "100000000000"
-	StaticBeforeMinerSettings.Iterations = "100000000000000000"
+	StaticBeforeMinerSettings.Iterations = "100000000000"
 	StaticBeforeMinerSettings.TimeoutT = 256
-	StaticBeforeMinerSettings.CheckActualInMin = 4 // How often to check the relevance of tasks in minutes
 	// --------
 
-	BuildVersion = "v0.0.4-alpha"
+	BuildVersion = "v0.0.1-beta"
 
 	Texts.Logo = `
  _                                _                               

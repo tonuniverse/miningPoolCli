@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"math/rand"
 	"miningPoolCli/config"
 	"miningPoolCli/utils/api"
@@ -11,6 +10,7 @@ import (
 	"miningPoolCli/utils/gpuUtils"
 	"miningPoolCli/utils/helpers"
 	"miningPoolCli/utils/initp"
+	"miningPoolCli/utils/logreport"
 	"miningPoolCli/utils/miniLogger"
 	"os/exec"
 	"strconv"
@@ -28,17 +28,18 @@ type gpuGoroutine struct {
 var gpuGoroutines []gpuGoroutine
 var globalTasks []api.Task
 
-func startTask(gpuGoIndex int, task api.Task) {
-	gpuGoroutines[gpuGoIndex].startTimestamp = time.Now().Unix()
+func startTask(i int, task api.Task) {
+	gpuGoroutines[i].startTimestamp = time.Now().Unix()
 
-	mineResultFilename := "mined_" + strconv.Itoa(gpuGoroutines[gpuGoIndex].gpuData.GpuId) + ".boc"
+	mineResultFilename := "mined_" + strconv.Itoa(task.Id) + ".boc"
 	pathToBoc := config.MinerGetter.MinerDirectory + "/" + mineResultFilename
 
 	cmd := exec.Command(
 		"./"+config.MinerGetter.MinerDirectory+"/pow-miner-opencl", "-vv",
-		"-g"+strconv.Itoa(gpuGoroutines[gpuGoIndex].gpuData.GpuId),
+		"-g"+strconv.Itoa(gpuGoroutines[i].gpuData.GpuId),
 		"-p"+strconv.Itoa(config.StaticBeforeMinerSettings.PlatformID),
-		"-F"+strconv.Itoa(config.StaticBeforeMinerSettings.BoostFactor), "-t1920",
+		"-F"+strconv.Itoa(config.StaticBeforeMinerSettings.BoostFactor),
+		"-t"+strconv.Itoa(config.StaticBeforeMinerSettings.TimeoutT),
 		config.StaticBeforeMinerSettings.PoolAddress,
 		helpers.ConvertHexData(task.Seed),
 		helpers.ConvertHexData(task.Complexity),
@@ -47,7 +48,7 @@ func startTask(gpuGoIndex int, task api.Task) {
 		pathToBoc,
 	)
 
-	cmd.Stdout = &gpuGoroutines[gpuGoIndex].procStdout
+	cmd.Stdout = &gpuGoroutines[i].procStdout
 
 	unblockFunc := make(chan struct{}, 1)
 
@@ -67,29 +68,14 @@ func startTask(gpuGoIndex int, task api.Task) {
 
 				bocServerResp := api.SendHexBocToServer(bocFileInHex, task.Seed)
 				if bocServerResp.Data == "Found" && bocServerResp.Status == "ok" {
-					miniLogger.LogOk(fmt.Sprintf(
-						"Share FOUND on \"%s\" | gpu id: %s; task id: %s",
-						gpuGoroutines[gpuGoIndex].gpuData.Model,
-						strconv.Itoa(gpuGoroutines[gpuGoIndex].gpuData.GpuId),
-						strconv.Itoa(task.Id),
-					))
+					logreport.ShareFound(gpuGoroutines[i].gpuData.Model, gpuGoroutines[i].gpuData.GpuId, task.Id)
 				} else {
-					miniLogger.LogPass()
-					miniLogger.LogError("Share found but server didn't accept it")
-					miniLogger.LogError("----- Server error response for task with id " + strconv.Itoa(task.Id) + ":")
-					miniLogger.LogError("-Status: " + bocServerResp.Status)
-					miniLogger.LogError("-Data: " + bocServerResp.Data)
-					miniLogger.LogError("-Hash: " + bocServerResp.Hash)
-					miniLogger.LogError("-Complexity: " + bocServerResp.Complexity)
-					miniLogger.LogError("----- Local data")
-					miniLogger.LogError("-Seed: " + task.Seed)
-					miniLogger.LogError("-Complexity: " + task.Complexity)
-					miniLogger.LogPass()
+					logreport.ShareServerError(task, bocServerResp, gpuGoroutines[i].gpuData.GpuId)
 				}
 			}
 			files.RemovePath(pathToBoc)
 		}
-		enableTask(gpuGoIndex)
+		enableTask(i)
 		unblockFunc <- struct{}{}
 	}()
 
@@ -129,7 +115,7 @@ func syncTasks(firstSync *chan struct{}) {
 			firstSyncIsOk = true
 		}
 
-		time.Sleep(3 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 }
 
@@ -180,6 +166,6 @@ func main() {
 
 	for {
 		calcHashrate(gpuGoroutines)
-		time.Sleep(60 * 5 * time.Second)
+		time.Sleep(60 * 1 * time.Second)
 	}
 }

@@ -40,16 +40,18 @@ type ServerResponse struct {
 
 func SendPostJsonReq(jsonData []byte, serverUrl string) []byte {
 	var body []byte = nil
-	for attempts := 0; attempts < 3; attempts++ {
+	for attempts := 0; attempts < 5; attempts++ {
 		request, _ := http.NewRequest("POST", serverUrl, bytes.NewBuffer(jsonData))
 		request.Header.Set("Content-Type", "application/json; charset=UTF-8")
 		request.Header.Set("Build-Version", config.BuildVersion)
 
-		client := &http.Client{Timeout: 5 * time.Second}
+		client := &http.Client{Timeout: 2 * time.Second}
 
 		response, err := client.Do(request)
 		if err != nil {
 			miniLogger.LogError(err.Error())
+			miniLogger.LogInfo("Sleep request for 3 sec")
+			time.Sleep(3 * time.Second)
 			miniLogger.LogInfo("Attempting to retry the request... [" + strconv.Itoa(attempts+1) + "/" + "3]")
 			continue
 		}
@@ -61,6 +63,9 @@ func SendPostJsonReq(jsonData []byte, serverUrl string) []byte {
 		}(response.Body)
 
 		body, _ = ioutil.ReadAll(response.Body)
+		if attempts > 0 {
+			miniLogger.LogOk("Request sent")
+		}
 		break
 	}
 	if body == nil {
