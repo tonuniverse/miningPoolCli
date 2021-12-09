@@ -4,7 +4,7 @@ BUILD_VERSION=${PARSE_VER:1:-1}
 FOLDER="miningPoolCli-${BUILD_VERSION}"
 TAR_NAME="miningPoolCli-${BUILD_VERSION}-linux.tar.gz"
 
-echo "Creating release v${BUILD_VERSION}"
+printf "Creating release v${BUILD_VERSION}\n\n"
 
 go build -o miningPoolCli main.go
 
