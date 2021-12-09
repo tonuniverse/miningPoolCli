@@ -42,6 +42,7 @@ func InitProgram() []gpuUtils.GPUstruct {
 
 	flag.StringVar(&config.ServerSettings.AuthKey, "pool-id", "", "")
 	flag.StringVar(&config.ServerSettings.MiningPoolServerURL, "url", "https://pool.tonuniverse.com", "")
+	flag.BoolVar(&config.UpdateStatsFile, "stats", false, "")
 	flag.Parse()
 
 	switch "" {

@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
+	"io/ioutil"
 	"math/rand"
 	"miningPoolCli/config"
 	"miningPoolCli/utils/api"
@@ -123,9 +125,13 @@ func enableTask(gpuGoIndex int) {
 	go startTask(gpuGoIndex, globalTasks[rand.Intn(len(globalTasks))])
 }
 
+type mStats struct {
+	HashRate int `json:"hash_rate"`
+	Uptime   int `json:"uptime"`
+}
+
 func calcHashrate(gpus []gpuGoroutine) {
 	var totalHashRate int
-
 	for _, v := range gpus {
 		hS := strings.Split(v.procStdout.String(), "\n")
 
@@ -144,6 +150,19 @@ func calcHashrate(gpus []gpuGoroutine) {
 		}
 
 		totalHashRate += perHashRate
+	}
+
+	if config.UpdateStatsFile {
+		var genStats mStats = mStats{
+			HashRate: totalHashRate,
+			Uptime:   int(time.Now().Unix()) - config.StartProgramTimestamp,
+		}
+
+		file, err := json.Marshal(genStats)
+		if err != nil {
+			miniLogger.LogFatalStackError(err)
+		}
+		_ = ioutil.WriteFile("stats.json", file, 0644)
 	}
 
 	miniLogger.LogInfo("Total hashrate: ~" + strconv.Itoa(totalHashRate) + " Mh")
@@ -166,6 +185,6 @@ func main() {
 
 	for {
 		calcHashrate(gpuGoroutines)
-		time.Sleep(60 * 1 * time.Second)
+		time.Sleep(30 * time.Second)
 	}
 }

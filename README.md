@@ -40,3 +40,11 @@ Run `./miningPoolCli` with flags:
 	Mining pool API url. (default "https://pool.tonuniverse.com")
 
   ---------------------------------------------------
+
+  -stats bool
+  
+	Example: -stats
+	If this flag is set, a "stats.json" file will be created 
+	with automatically updated statistics.
+
+  ---------------------------------------------------

@@ -8,6 +8,8 @@
 *.boc
 miningPoolCli
 __miner__
+stats.json
+.temp
 
 # --------------------- build ---------------------
 *.tar.gz

@@ -21,7 +21,10 @@ along with miningPoolCli.  If not, see <https://www.gnu.org/licenses/>.
 
 package config
 
-import "runtime"
+import (
+	"runtime"
+	"time"
+)
 
 type colors struct {
 	ColorRed, ColorGreen,
@@ -77,8 +80,12 @@ var StaticBeforeMinerSettings staticBeforeMinerSettings
 var OSType osType
 
 var BuildVersion string
+var UpdateStatsFile bool
+var StartProgramTimestamp int
 
 func Configure() {
+	StartProgramTimestamp = int(time.Now().Unix())
+
 	Colors = colors{
 		"\u001b[31m", "\u001b[32m",
 		"\u001b[33m", "\u001b[34m",
@@ -157,6 +164,14 @@ Usage of ./miningPoolCli (Read more at tonuniverse.com):
   
 	Example: -url=https://pool.tonuniverse.com
 	Mining pool API url. (default "https://pool.tonuniverse.com")
+
+  ---------------------------------------------------
+
+  -stats bool
+  
+	Example: -stats
+	If this flag is set, a "stats.json" file will be created 
+	with automatically updated statistics.
 
   ---------------------------------------------------
 `
