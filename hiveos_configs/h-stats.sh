@@ -3,8 +3,9 @@
 . h-manifest.conf
 
 # Read gpu stats
-temp=$(jq '.temp' <<< $gpu_stats)
-fan=$(jq '.fan' <<< $gpu_stats)
+temp=$(gpu-stats | jq ".temp")
+fan=$(gpu-stats | jq ".fan")
+
 [[ $cpu_indexes_array != '[]' ]] && #remove Internal Gpus
     temp=$(jq -c "del(.$cpu_indexes_array)" <<< $temp) &&
     fan=$(jq -c "del(.$cpu_indexes_array)" <<< $fan)
