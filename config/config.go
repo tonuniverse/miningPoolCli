@@ -79,7 +79,6 @@ var ServerSettings serverSettings
 var StaticBeforeMinerSettings staticBeforeMinerSettings
 var OSType osType
 
-var BuildVersion string
 var UpdateStatsFile bool
 var StartProgramTimestamp int
 
@@ -122,7 +121,7 @@ func Configure() {
 	StaticBeforeMinerSettings.TimeoutT = 256
 	// --------
 
-	BuildVersion = "v1.0.1"
+	// BuildVersion = "1.0.1"
 
 	Texts.Logo = `
  _                                _                               
@@ -133,7 +132,7 @@ func Configure() {
  \__| \___/ |_| |_| \__,_||_| |_||_|  \_/   \___||_|   |___/ \___|
 	`
 
-	Texts.GPL3 = `miningPoolCli (` + BuildVersion + `) – open-source tonuniverse mining pool client
+	Texts.GPL3 = `miningPoolCli (v` + BuildVersion + `) – open-source tonuniverse mining pool client
 
 Copyright (C) 2021 tonuniverse.com
 
