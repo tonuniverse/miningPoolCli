@@ -18,4 +18,4 @@ POOL_ID=${POOL_ID:1:-1}
 
 echo "POOL_ID: ${POOL_ID}"
 
-./miningPoolCli -stats -pool-id=$POOL_ID -url=https://test-pool.tonuniverse.com | tee --append $CUSTOM_LOG_BASENAME.log
+./miningPoolCli -stats -pool-id=$POOL_ID | tee --append $CUSTOM_LOG_BASENAME.log

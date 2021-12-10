@@ -25,12 +25,20 @@ ver=$CUSTOM_VERSION
 hs_units="mhs"
 
 # Performance
+# stats=$(jq -nc \
+#         --arg total_khs "$khs" \
+#         --arg hs_units "$hs_units" \
+#         --argjson temp "$temp" \
+#         --argjson fan "$fan" \
+#         --arg uptime "$uptime" \
+#         --arg algo "toncoin" \
+#         --arg ver "$ver" \
+#         '{$total_khs, $hs_units, $temp, $fan, $uptime, $algo, $ver}')
+
 stats=$(jq -nc \
         --arg total_khs "$khs" \
         --arg hs_units "$hs_units" \
-        --argjson temp "$temp" \
-        --argjson fan "$fan" \
         --arg uptime "$uptime" \
-        --arg algo "toncoin" \
+        --arg algo "sha256" \
         --arg ver "$ver" \
-        '{$total_khs, $hs_units, $temp, $fan, $uptime, $algo, $ver}')
+        '{$total_khs, $hs_units, $uptime, $algo, $ver}')
