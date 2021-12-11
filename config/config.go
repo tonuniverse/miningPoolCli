@@ -60,7 +60,6 @@ type serverSettings struct {
 
 type staticBeforeMinerSettings struct {
 	NumCPUForWFlag int
-	PlatformID     int
 	BoostFactor    int
 	TimeoutT       int
 	Iterations     string
@@ -115,7 +114,6 @@ func Configure() {
 
 	// -------- StaticBeforeMinerSettings
 	StaticBeforeMinerSettings.NumCPUForWFlag = runtime.NumCPU()
-	StaticBeforeMinerSettings.PlatformID = 0
 	StaticBeforeMinerSettings.BoostFactor = 256
 	StaticBeforeMinerSettings.Iterations = "100000000000"
 	StaticBeforeMinerSettings.TimeoutT = 256

@@ -39,7 +39,7 @@ func startTask(i int, task api.Task) {
 	cmd := exec.Command(
 		"./"+config.MinerGetter.MinerDirectory+"/pow-miner-opencl", "-vv",
 		"-g"+strconv.Itoa(gpuGoroutines[i].gpuData.GpuId),
-		"-p"+strconv.Itoa(config.StaticBeforeMinerSettings.PlatformID),
+		"-p"+strconv.Itoa(gpuGoroutines[i].gpuData.PlatformId),
 		"-F"+strconv.Itoa(config.StaticBeforeMinerSettings.BoostFactor),
 		"-t"+strconv.Itoa(config.StaticBeforeMinerSettings.TimeoutT),
 		config.StaticBeforeMinerSettings.PoolAddress,
@@ -185,6 +185,6 @@ func main() {
 
 	for {
 		calcHashrate(gpuGoroutines)
-		time.Sleep(30 * time.Second)
+		time.Sleep(60 * 3 * time.Second)
 	}
 }
