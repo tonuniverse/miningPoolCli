@@ -185,6 +185,6 @@ func main() {
 
 	for {
 		calcHashrate(gpuGoroutines)
-		time.Sleep(60 * 3 * time.Second)
+		time.Sleep(60 * time.Second)
 	}
 }
