@@ -6,11 +6,13 @@
 *.so
 *.dylib
 *.boc
+
 miningPoolCli
 __miner__
 stats.json
 .temp
 test
+serveraddr.txt
 
 # --------------------- build ---------------------
 *.tar.gz

@@ -66,6 +66,13 @@ type minerRegexKit struct {
 	FindIntIds, FindHashRate, FindDecimal *regexp.Regexp
 }
 
+// miner stat server config
+type netServer struct {
+	Host         string
+	HostFileName string
+	RunThis      bool
+}
+
 var Colors colors
 var MinerGetter minerGetter
 var OS os
@@ -75,13 +82,11 @@ var OSType osType
 var MRgxKit minerRegexKit
 
 var UpdateStatsFile bool
-var StartProgramTimestamp int
+var StartProgramTimestamp int64
+
+var NetSrv netServer
 
 func Configure() {
-	// -------- configure texts
-	configureTexts()
-	// --------
-
 	// -------- minerRegexKit
 	MRgxKit = minerRegexKit{
 		FindGPUPat:      regexp.MustCompile(`(\[ [^\]]+ \])`),
@@ -93,7 +98,7 @@ func Configure() {
 	}
 	// --------
 
-	StartProgramTimestamp = int(time.Now().Unix())
+	StartProgramTimestamp = time.Now().Unix()
 
 	Colors = colors{
 		"\u001b[31m", "\u001b[32m",
@@ -131,5 +136,16 @@ func Configure() {
 		Iterations:  "100000000000",
 		TimeoutT:    256,
 	}
+	// --------
+
+	// -------- Net server
+	NetSrv = netServer{
+		Host:         "127.0.0.1",
+		HostFileName: "serveraddr.txt",
+	}
+	// --------
+
+	// -------- configure texts
+	configureTexts()
 	// --------
 }

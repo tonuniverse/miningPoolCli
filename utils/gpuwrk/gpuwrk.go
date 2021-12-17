@@ -36,6 +36,14 @@ type GPUstruct struct {
 	PlatformId int    `json:"platform_id"`
 }
 
+type GpuGoroutine struct {
+	GpuData GPUstruct
+	// startTimestamp int64
+	CurrentHashrate int
+
+	ProcStderr bytes.Buffer
+}
+
 func LogGpuList(gpus []GPUstruct) {
 	var gpuNames []string
 
@@ -72,6 +80,7 @@ func searchGpusWithRegex() ([]GPUstruct, error) {
 		)
 
 		panddId := config.MRgxKit.FindIntIds.FindAllString(v, -1)
+		// TODO: handle errors
 		platformId, _ := strconv.Atoi(strings.Replace(panddId[0], "#", "", -1))
 		deviceId, _ := strconv.Atoi(strings.Replace(panddId[1], "#", "", -1))
 

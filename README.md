@@ -19,32 +19,29 @@ go build -o miningPoolCli main.go
 
 ## Usage
 
-! When the software starts up, it downloads the miner executable 
+When the software starts up, it downloads the miner executable 
 file from the release of the given github repository: 
-https://github.com/tonuniverse/pow-miner-gpu
+https://github.com/tontechio/pow-miner-gpu/
 
 Run `./miningPoolCli` with flags:
 
-  ---------------------------------------------------
-
-  -pool-id string
+`-pool-id` string
 
 	Example: -pool-id=904f935185ef96c1ab4daf11e5d84b22
-	Key for authorization in the mining pool.
+	A unique identifier of a pool participant.
 
-  ---------------------------------------------------
-
-  -url string
-
-	Example: -url=https://pool.tonuniverse.com
+`-url` string
+  
 	Mining pool API url. (default "https://pool.tonuniverse.com")
 
-  ---------------------------------------------------
-
-  -stats bool
+`-stats` bool
   
-	Example: -stats
 	If this flag is set, a "stats.json" file will be created 
-	with automatically updated statistics.
+	with automatically updated statistics. (Hive OS support)
 
-  ---------------------------------------------------
+`-serve-stat` bool
+
+	If this flag is set, the local server serving "/stat" is started. 
+	Accepts GET and POST methods. Returns the miner's statistics in 
+	JSON format. The HTTP port is automatically selected and will be 
+	printed in the terminal and written to the "serveraddr.txt" file
