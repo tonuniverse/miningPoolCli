@@ -26,7 +26,7 @@ import (
 	"compress/gzip"
 	"io"
 	"log"
-	"miningPoolCli/utils/miniLogger"
+	"miningPoolCli/utils/mlog"
 	"os"
 	"os/exec"
 )
@@ -34,7 +34,7 @@ import (
 func ExecuteSimpleCommand(name string, arg ...string) []byte {
 	stdout, err := exec.Command(name, arg...).Output()
 	if err != nil {
-		miniLogger.LogFatal("Error while executing sh: " + "\"" + name + "\"" + "; " + err.Error())
+		mlog.LogFatal("Error while executing sh: " + "\"" + name + "\"" + "; " + err.Error())
 	}
 	return stdout
 }
@@ -74,7 +74,7 @@ func ExtractTarGz(gzipStream io.Reader, pathToExtarct string) {
 			outFile.Close()
 
 		default:
-			miniLogger.LogFatal("ExtractTarGz: uknown type: " + string(header.Typeflag) + " in " + header.Name)
+			mlog.LogFatal("ExtractTarGz: uknown type: " + string(header.Typeflag) + " in " + header.Name)
 		}
 
 	}

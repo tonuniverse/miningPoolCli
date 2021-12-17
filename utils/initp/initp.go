@@ -26,14 +26,14 @@ import (
 	"fmt"
 	"miningPoolCli/config"
 	"miningPoolCli/utils/api"
-	"miningPoolCli/utils/getMiner"
-	"miningPoolCli/utils/gpuUtils"
-	"miningPoolCli/utils/miniLogger"
+	"miningPoolCli/utils/getminer"
+	"miningPoolCli/utils/gpuwrk"
+	"miningPoolCli/utils/mlog"
 	"os"
 	"runtime"
 )
 
-func InitProgram() []gpuUtils.GPUstruct {
+func InitProgram() []gpuwrk.GPUstruct {
 	config.Configure()
 
 	flag.Usage = func() {
@@ -47,34 +47,34 @@ func InitProgram() []gpuUtils.GPUstruct {
 
 	switch "" {
 	case config.ServerSettings.AuthKey:
-		miniLogger.LogFatal("Flag -pool-id is required; for help run with -h flag")
+		mlog.LogFatal("Flag -pool-id is required; for help run with -h flag")
 	}
 
-	miniLogger.LogText(config.Texts.Logo)
-	miniLogger.LogText(config.Texts.WelcomeAdditionalMsg)
+	mlog.LogText(config.Texts.Logo)
+	mlog.LogText(config.Texts.WelcomeAdditionalMsg)
 
 	os, architecture := runtime.GOOS, runtime.GOARCH
 
 	if os == config.OSType.Win {
-		miniLogger.LogFatal("Unsupported OS detected: " + "Windows")
+		mlog.LogFatal("Unsupported OS detected: " + "Windows")
 	} else if os == config.OSType.Macos {
-		miniLogger.LogFatal("Unsupported OS detected: " + "Mac OS")
+		mlog.LogFatal("Unsupported OS detected: " + "Mac OS")
 	} else if os == config.OSType.Linux && architecture == "amd64" {
-		miniLogger.LogOk("Supported OS detected: " + os + "/" + architecture)
+		mlog.LogOk("Supported OS detected: " + os + "/" + architecture)
 	} else {
-		miniLogger.LogFatal("Unsupported OS detected: " + os + "/" + architecture)
+		mlog.LogFatal("Unsupported OS detected: " + os + "/" + architecture)
 	}
-	miniLogger.LogInfo("Using mining pool API url: " + config.ServerSettings.MiningPoolServerURL)
+	mlog.LogInfo("Using mining pool API url: " + config.ServerSettings.MiningPoolServerURL)
 	config.OS.OperatingSystem, config.OS.Architecture = os, architecture
 
 	api.Auth()
 
-	getMiner.UbubntuGetMiner()
-	gpusArray := gpuUtils.SearchGpus()
+	getminer.UbubntuGetMiner()
+	gpusArray := gpuwrk.SearchGpus()
 
-	miniLogger.LogPass()
-	gpuUtils.LogGpuList(gpusArray)
-	miniLogger.LogInfo("Launching the mining processes...")
+	mlog.LogPass()
+	gpuwrk.LogGpuList(gpusArray)
+	mlog.LogInfo("Launching the mining processes...")
 
 	return gpusArray
 }

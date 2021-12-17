@@ -10,6 +10,7 @@ miningPoolCli
 __miner__
 stats.json
 .temp
+test
 
 # --------------------- build ---------------------
 *.tar.gz

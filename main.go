@@ -7,13 +7,13 @@ import (
 	"math/rand"
 	"miningPoolCli/config"
 	"miningPoolCli/utils/api"
-	"miningPoolCli/utils/bocUtils"
+	"miningPoolCli/utils/boc"
 	"miningPoolCli/utils/files"
-	"miningPoolCli/utils/gpuUtils"
+	"miningPoolCli/utils/gpuwrk"
 	"miningPoolCli/utils/helpers"
 	"miningPoolCli/utils/initp"
 	"miningPoolCli/utils/logreport"
-	"miningPoolCli/utils/miniLogger"
+	"miningPoolCli/utils/mlog"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -21,10 +21,10 @@ import (
 )
 
 type gpuGoroutine struct {
-	gpuData gpuUtils.GPUstruct
+	gpuData gpuwrk.GPUstruct
 	// startTimestamp int64
 
-	procStdout bytes.Buffer
+	procStderr bytes.Buffer
 }
 
 var gpuGoroutines []gpuGoroutine
@@ -50,7 +50,7 @@ func startTask(i int, task api.Task) {
 		pathToBoc,
 	)
 
-	cmd.Stdout = &gpuGoroutines[i].procStdout
+	cmd.Stderr = &gpuGoroutines[i].procStderr
 
 	unblockFunc := make(chan struct{}, 1)
 
@@ -66,7 +66,7 @@ func startTask(i int, task api.Task) {
 		if helpers.StringInSlice(mineResultFilename, files.GetDir(config.MinerGetter.MinerDirectory)) {
 			// found
 			if !killedByNotActual {
-				bocFileInHex, _ := bocUtils.ReadBocFileToHex(pathToBoc)
+				bocFileInHex, _ := boc.ReadBocFileToHex(pathToBoc)
 
 				bocServerResp := api.SendHexBocToServer(bocFileInHex, task.Seed, strconv.Itoa(task.Id))
 				if bocServerResp.Data == "Found" && bocServerResp.Status == "ok" {
@@ -86,7 +86,7 @@ func startTask(i int, task api.Task) {
 			if checkTaskAlreadyFound(task.Id) {
 				killedByNotActual = true
 				if err := cmd.Process.Kill(); err != nil {
-					miniLogger.LogError(err.Error())
+					mlog.LogError(err.Error())
 				}
 				break
 			}
@@ -132,14 +132,16 @@ type mStats struct {
 
 func calcHashrate(gpus []gpuGoroutine) {
 	var totalHashRate int
-	for _, v := range gpus {
-		hS := strings.Split(v.procStdout.String(), "\n")
 
-		if len(hS) < 4 {
+	for _, v := range gpus {
+		hsArr := config.MRgxKit.FindHashRate.FindAllString(v.procStderr.String(), -1)
+		if len(hsArr) < 2 {
 			return
 		}
+		lastHs := hsArr[len(hsArr)-1]
+		hS := config.MRgxKit.FindDecimal.FindAllString(lastHs, -1)
 
-		sep := strings.Split(hS[len(hS)-2], ".")
+		sep := strings.Split(hS[0], ".")
 		if len(sep) != 2 {
 			return
 		}
@@ -160,12 +162,12 @@ func calcHashrate(gpus []gpuGoroutine) {
 
 		file, err := json.Marshal(genStats)
 		if err != nil {
-			miniLogger.LogFatalStackError(err)
+			mlog.LogFatalStackError(err)
 		}
 		_ = ioutil.WriteFile("stats.json", file, 0644)
 	}
 
-	miniLogger.LogInfo("Total hashrate: ~" + strconv.Itoa(totalHashRate) + " Mh")
+	mlog.LogInfo("Total hashrate: ~" + strconv.Itoa(totalHashRate) + " Mh")
 }
 
 func main() {

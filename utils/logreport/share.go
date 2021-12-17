@@ -24,29 +24,29 @@ package logreport
 import (
 	"fmt"
 	"miningPoolCli/utils/api"
-	"miningPoolCli/utils/miniLogger"
+	"miningPoolCli/utils/mlog"
 	"strconv"
 )
 
 func ShareFound(gpuModel string, gpuId int, taskId int) {
-	miniLogger.LogOk(fmt.Sprintf(
+	mlog.LogOk(fmt.Sprintf(
 		"Share FOUND on \"%s\" | gpu id: %s; task id: %s",
 		gpuModel, strconv.Itoa(gpuId), strconv.Itoa(taskId),
 	))
 }
 
 func ShareServerError(task api.Task, bocResp api.SendHexBocToServerResponse, gpuId int) {
-	miniLogger.LogPass()
-	miniLogger.LogError("Share found but server didn't accept it")
-	miniLogger.LogError("----- Server error response for task with id " + strconv.Itoa(task.Id) + ":")
-	miniLogger.LogError("-Status: " + bocResp.Status)
-	miniLogger.LogError("-Code: " + strconv.Itoa(bocResp.Code))
-	miniLogger.LogError("-Data: " + bocResp.Data)
-	miniLogger.LogError("-Hash: " + bocResp.Hash)
-	miniLogger.LogError("-Complexity: " + bocResp.Complexity)
-	miniLogger.LogError("----- Local data")
-	miniLogger.LogError("-GPU ID: " + strconv.Itoa(gpuId))
-	miniLogger.LogError("-Seed: " + task.Seed)
-	miniLogger.LogError("-Complexity: " + task.Complexity)
-	miniLogger.LogPass()
+	mlog.LogPass()
+	mlog.LogError("Share found but server didn't accept it")
+	mlog.LogError("----- Server error response for task with id " + strconv.Itoa(task.Id) + ":")
+	mlog.LogError("-Status: " + bocResp.Status)
+	mlog.LogError("-Code: " + strconv.Itoa(bocResp.Code))
+	mlog.LogError("-Data: " + bocResp.Data)
+	mlog.LogError("-Hash: " + bocResp.Hash)
+	mlog.LogError("-Complexity: " + bocResp.Complexity)
+	mlog.LogError("----- Local data")
+	mlog.LogError("-GPU ID: " + strconv.Itoa(gpuId))
+	mlog.LogError("-Seed: " + task.Seed)
+	mlog.LogError("-Complexity: " + task.Complexity)
+	mlog.LogPass()
 }

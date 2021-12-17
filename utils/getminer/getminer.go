@@ -19,14 +19,14 @@ You should have received a copy of the GNU General Public License
 along with miningPoolCli.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package getMiner
+package getminer
 
 import (
 	"fmt"
 	"miningPoolCli/config"
 	"miningPoolCli/utils/files"
 	"miningPoolCli/utils/helpers"
-	"miningPoolCli/utils/miniLogger"
+	"miningPoolCli/utils/mlog"
 	"os"
 
 	"github.com/cavaliercoder/grab"
@@ -46,26 +46,26 @@ func UbubntuGetMiner() {
 		executableName = config.MinerGetter.WinSettings.ExecutableName
 	}
 
-	miniLogger.LogInfo("Starting to download the miner for a " + config.OS.OperatingSystem + " system")
+	mlog.LogInfo("Starting to download the miner for a " + config.OS.OperatingSystem + " system")
 
 	if helpers.StringInSlice(config.MinerGetter.MinerDirectory, files.GetDir(".")) {
-		miniLogger.LogInfo("\"" + config.MinerGetter.MinerDirectory + "\"" + " already exists; it will be removed")
+		mlog.LogInfo("\"" + config.MinerGetter.MinerDirectory + "\"" + " already exists; it will be removed")
 		files.RemovePath(config.MinerGetter.MinerDirectory)
 	}
 
 	getFileResp, err := grab.Get(".", minerReleaseURL)
 	if err != nil {
-		miniLogger.LogFatalStackError(err)
+		mlog.LogFatalStackError(err)
 	}
 
 	if helpers.StringInSlice(minerFileName, files.GetDir(".")) {
-		miniLogger.LogOk("Download completed \"" + getFileResp.Filename + "\"")
+		mlog.LogOk("Download completed \"" + getFileResp.Filename + "\"")
 	} else {
-		miniLogger.LogFatal("Something went wrong. " + minerFileName + " not found in this catalog")
+		mlog.LogFatal("Something went wrong. " + minerFileName + " not found in this catalog")
 	}
 
 	if err := os.Mkdir(config.MinerGetter.MinerDirectory, 0755); err != nil {
-		miniLogger.LogFatal(err.Error())
+		mlog.LogFatal(err.Error())
 	}
 
 	r, err := os.Open(minerFileName)
@@ -81,8 +81,8 @@ func UbubntuGetMiner() {
 	files.RemovePath(minerFileName)
 
 	if helpers.StringInSlice(executableName, files.GetDir(config.MinerGetter.MinerDirectory)) {
-		miniLogger.LogOk("The miner is saved in the directory: " + "\"" + config.MinerGetter.MinerDirectory + "\"")
+		mlog.LogOk("The miner is saved in the directory: " + "\"" + config.MinerGetter.MinerDirectory + "\"")
 	} else {
-		miniLogger.LogFatal("Something went wrong. Miner not found in" + "\"" + config.MinerGetter.MinerDirectory + "\"")
+		mlog.LogFatal("Something went wrong. Miner not found in" + "\"" + config.MinerGetter.MinerDirectory + "\"")
 	}
 }

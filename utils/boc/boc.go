@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with miningPoolCli.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package bocUtils
+package boc
 
 import (
 	"encoding/hex"

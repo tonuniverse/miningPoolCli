@@ -24,7 +24,7 @@ package api
 import (
 	"encoding/json"
 	"miningPoolCli/config"
-	"miningPoolCli/utils/miniLogger"
+	"miningPoolCli/utils/mlog"
 )
 
 type User struct {
@@ -51,23 +51,23 @@ func Auth() {
 
 	err := json.Unmarshal(bodyResp, &serverResp)
 	if err != nil {
-		miniLogger.LogFatal(err.Error())
+		mlog.LogFatal(err.Error())
 	}
 
 	if serverResp.User.Id != 0 {
-		miniLogger.LogOk("Authorization successful\n")
+		mlog.LogOk("Authorization successful\n")
 		if serverResp.User.Address != "" {
-			miniLogger.LogInfo("Your TON wallet:")
-			miniLogger.LogInfo(serverResp.User.Address)
+			mlog.LogInfo("Your TON wallet:")
+			mlog.LogInfo(serverResp.User.Address)
 		} else {
-			miniLogger.LogInfo("You can set your TON wallet in https://t.me/tonuniversebot")
+			mlog.LogInfo("You can set your TON wallet in https://t.me/tonuniversebot")
 		}
 
 		config.StaticBeforeMinerSettings.PoolAddress = serverResp.PoolAddress
 	} else {
-		miniLogger.LogFatal("Auth failed; invalid token")
+		mlog.LogFatal("Auth failed; invalid token")
 	}
-	miniLogger.LogPass()
+	mlog.LogPass()
 }
 
 type Task struct {
@@ -92,7 +92,7 @@ func GetTasks() GetTasksResponse {
 	var results GetTasksResponse
 
 	if err := json.Unmarshal(bodyResp, &results); err != nil {
-		miniLogger.LogFatal(err.Error())
+		mlog.LogFatal(err.Error())
 	}
 
 	return results
@@ -121,7 +121,7 @@ func SendHexBocToServer(hexData string, seed string, taskId string) SendHexBocTo
 
 	var results SendHexBocToServerResponse
 	if err := json.Unmarshal(bodyResp, &results); err != nil {
-		miniLogger.LogFatalStackError(err)
+		mlog.LogFatalStackError(err)
 	}
 
 	return results

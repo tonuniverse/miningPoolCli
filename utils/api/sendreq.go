@@ -26,7 +26,7 @@ import (
 	"crypto/tls"
 	"io/ioutil"
 	"miningPoolCli/config"
-	"miningPoolCli/utils/miniLogger"
+	"miningPoolCli/utils/mlog"
 	"net/http"
 	"strconv"
 	"time"
@@ -53,27 +53,27 @@ func SendPostJsonReq(jsonData []byte, serverUrl string) []byte {
 
 		response, err := client.Do(request)
 		if err != nil {
-			miniLogger.LogError(err.Error())
-			miniLogger.LogInfo("Sleep request for 3 sec")
+			mlog.LogError(err.Error())
+			mlog.LogInfo("Sleep request for 3 sec")
 			time.Sleep(3 * time.Second)
-			miniLogger.LogInfo("Attempting to retry the request... [" + strconv.Itoa(attempts+1) + "/" + "3]")
+			mlog.LogInfo("Attempting to retry the request... [" + strconv.Itoa(attempts+1) + "/" + "3]")
 			continue
 		}
 		defer func() {
 			err := response.Body.Close()
 			if err != nil {
-				miniLogger.LogFatalStackError(err)
+				mlog.LogFatalStackError(err)
 			}
 		}()
 
 		body, _ = ioutil.ReadAll(response.Body)
 		if attempts > 0 {
-			miniLogger.LogOk("Request sent")
+			mlog.LogOk("Request sent")
 		}
 		break
 	}
 	if body == nil {
-		miniLogger.LogFatal("Attempts to send a request have yielded no results :(")
+		mlog.LogFatal("Attempts to send a request have yielded no results :(")
 	}
 	return body
 }

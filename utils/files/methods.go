@@ -23,14 +23,14 @@ package files
 
 import (
 	"io/ioutil"
-	"miningPoolCli/utils/miniLogger"
+	"miningPoolCli/utils/mlog"
 	"os"
 )
 
 func GetDir(path string) []string {
 	listDir, err := ioutil.ReadDir(path)
 	if err != nil {
-		miniLogger.LogFatalStackError(err)
+		mlog.LogFatalStackError(err)
 	}
 
 	var files []string
@@ -43,6 +43,6 @@ func GetDir(path string) []string {
 
 func RemovePath(strDir string) {
 	if err := os.RemoveAll(strDir); err != nil {
-		miniLogger.LogFatalStackError(err)
+		mlog.LogFatalStackError(err)
 	}
 }
