@@ -45,3 +45,14 @@ Run `./miningPoolCli` with flags:
 	Accepts GET and POST methods. Returns the miner's statistics in 
 	JSON format. The HTTP port is automatically selected and will be 
 	printed in the terminal and written to the "serveraddr.txt" file
+
+## Do release
+
+To generate a new release, use `do-release.sh"`.
+
+This script will automatically compile the source code for the required OS, installing the version from the `config/version.go`
+
+Usage: 
+
+	./do-release.sh {linux|windows}
+
