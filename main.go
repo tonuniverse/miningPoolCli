@@ -14,6 +14,7 @@ import (
 	"miningPoolCli/utils/server"
 	"os/exec"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -47,7 +48,9 @@ func startTask(i int, task api.Task) {
 	var killedByNotActual bool
 	var done bool
 
-	cmd.Start()
+	if err := cmd.Start(); err != nil {
+		mlog.LogFatal("failed to start miner cmd; err: " + err.Error() + "; args: " + strings.Join(cmd.Args, " "))
+	}
 
 	go func() {
 		cmd.Wait()
@@ -82,7 +85,7 @@ func startTask(i int, task api.Task) {
 				}
 				break
 			}
-			time.Sleep(1 * time.Second)
+			time.Sleep(128 * time.Microsecond)
 		}
 	}()
 
