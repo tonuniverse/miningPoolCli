@@ -114,7 +114,11 @@ func syncTasks(firstSync *chan struct{}) {
 }
 
 func enableTask(gpuGoIndex int) {
-	go startTask(gpuGoIndex, globalTasks[rand.Intn(len(globalTasks))])
+	if tLen := len(globalTasks); tLen > 0 {
+		go startTask(gpuGoIndex, globalTasks[rand.Intn(len(globalTasks))])
+	} else {
+		mlog.LogError("can't start task, because the len of globalTasks <= 0")
+	}
 }
 
 func main() {
