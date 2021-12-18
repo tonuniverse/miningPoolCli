@@ -19,75 +19,22 @@ You should have received a copy of the GNU General Public License
 along with miningPoolCli.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package helpers
+package files
 
 import (
-	"archive/tar"
 	"archive/zip"
-	"compress/gzip"
 	"io"
-	"log"
 	"miningPoolCli/utils/mlog"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 )
-
-func ExecuteSimpleCommand(name string, arg ...string) []byte {
-	stdout, err := exec.Command(name, arg...).Output()
-	if err != nil {
-		mlog.LogFatal("Error while executing sh: " + "\"" + name + "\"" + "; " + err.Error())
-	}
-	return stdout
-}
-
-func ExtractTarGz(gzipStream io.Reader, pathToExtarct string) {
-	uncompressedStream, err := gzip.NewReader(gzipStream)
-	if err != nil {
-		log.Fatal("ExtractTarGz: NewReader failed")
-	}
-
-	tarReader := tar.NewReader(uncompressedStream)
-
-	for {
-		header, err := tarReader.Next()
-
-		if err == io.EOF {
-			break
-		}
-
-		if err != nil {
-			log.Fatalf("ExtractTarGz: Next() failed: %s", err.Error())
-		}
-
-		switch header.Typeflag {
-		case tar.TypeDir:
-			if err := os.Mkdir(pathToExtarct+"/"+header.Name, 0755); err != nil {
-				log.Fatalf("ExtractTarGz: Mkdir() failed: %s", err.Error())
-			}
-		case tar.TypeReg:
-			outFile, err := os.Create(pathToExtarct + "/" + header.Name)
-			if err != nil {
-				log.Fatalf("ExtractTarGz: Create() failed: %s", err.Error())
-			}
-			if _, err := io.Copy(outFile, tarReader); err != nil {
-				log.Fatalf("ExtractTarGz: Copy() failed: %s", err.Error())
-			}
-			outFile.Close()
-
-		default:
-			mlog.LogFatal("ExtractTarGz: uknown type: " + string(header.Typeflag) + " in " + header.Name)
-		}
-
-	}
-}
 
 // Extract ZIP files, but skip all directories in zip
 func ExtractZip(filename string, dst string) {
 	archive, err := zip.OpenReader(filename)
 	if err != nil {
-		panic(err)
+		mlog.LogFatal("error while opening '" + filename + "'; " + err.Error())
 	}
 	defer archive.Close()
 
@@ -102,7 +49,7 @@ func ExtractZip(filename string, dst string) {
 		c := filepath.Join(dst, filepath.Base(filePath))
 		dstFile, err := os.OpenFile(c, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 		if err != nil {
-			panic(err)
+			mlog.LogFatalStackError(err)
 		}
 
 		fileInArchive, err := f.Open()

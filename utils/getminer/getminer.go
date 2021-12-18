@@ -22,7 +22,6 @@ along with miningPoolCli.  If not, see <https://www.gnu.org/licenses/>.
 package getminer
 
 import (
-	"fmt"
 	"miningPoolCli/config"
 	"miningPoolCli/utils/files"
 	"miningPoolCli/utils/helpers"
@@ -32,7 +31,7 @@ import (
 	"github.com/cavaliercoder/grab"
 )
 
-func UbubntuGetMiner() {
+func GetMiner() {
 	var minerReleaseURL, minerFileName, executableName string
 
 	switch config.OS.OperatingSystem {
@@ -72,12 +71,12 @@ func UbubntuGetMiner() {
 	case config.OSType.Linux:
 		r, err := os.Open(minerFileName)
 		if err != nil {
-			fmt.Println(err)
+			mlog.LogFatal("error while opening '" + minerFileName + "'; " + err.Error())
 		}
 
-		helpers.ExtractTarGz(r, config.MinerGetter.MinerDirectory)
+		files.ExtractTarGz(r, config.MinerGetter.MinerDirectory)
 	case config.OSType.Win:
-		helpers.ExtractZip(minerFileName, config.MinerGetter.MinerDirectory)
+		files.ExtractZip(minerFileName, config.MinerGetter.MinerDirectory)
 	}
 
 	if config.OS.OperatingSystem == config.OSType.Linux {

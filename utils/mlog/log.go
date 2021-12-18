@@ -31,7 +31,15 @@ import (
 )
 
 func colorize(message string, color string) {
-	fmt.Print(color, message, config.Colors.ColorReset+"\n")
+	switch config.OS.OperatingSystem {
+	case config.OSType.Linux:
+		fmt.Print(color, message, config.Colors.ColorReset+"\n")
+	case config.OSType.Win:
+		// windows not support unix colorize system
+		fmt.Print(message + "\n")
+	default:
+		fmt.Print(message + "\n")
+	}
 }
 
 func getNowTimeAsString() string {

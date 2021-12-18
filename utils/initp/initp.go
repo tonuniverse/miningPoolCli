@@ -47,6 +47,7 @@ func InitProgram() []gpuwrk.GPUstruct {
 	flag.BoolVar(&config.NetSrv.RunThis, "serve-stat", false, "") // run http server with miner stat
 
 	flag.Parse()
+	config.OS.OperatingSystem, config.OS.Architecture = runtime.GOOS, runtime.GOARCH
 
 	switch "" {
 	case config.ServerSettings.AuthKey:
@@ -56,23 +57,18 @@ func InitProgram() []gpuwrk.GPUstruct {
 	mlog.LogText(config.Texts.Logo)
 	mlog.LogText(config.Texts.WelcomeAdditionalMsg)
 
-	os, architecture := runtime.GOOS, runtime.GOARCH
-
-	if os == config.OSType.Win {
-		mlog.LogOk("Supported OS detected: " + os + "/" + architecture)
-	} else if os == config.OSType.Macos {
-		mlog.LogFatal("Unsupported OS detected: " + "Mac OS")
-	} else if os == config.OSType.Linux && architecture == "amd64" {
-		mlog.LogOk("Supported OS detected: " + os + "/" + architecture)
+	if (config.OS.OperatingSystem == config.OSType.Win ||
+		config.OS.OperatingSystem == config.OSType.Linux) && config.OS.Architecture == "amd64" {
+		mlog.LogOk("Supported OS detected: " + config.OS.OperatingSystem + "/" + config.OS.Architecture)
 	} else {
-		mlog.LogFatal("Unsupported OS detected: " + os + "/" + architecture)
+		mlog.LogFatal("Unsupported OS detected: " + config.OS.OperatingSystem + "/" + config.OS.Architecture)
 	}
+
 	mlog.LogInfo("Using mining pool API url: " + config.ServerSettings.MiningPoolServerURL)
-	config.OS.OperatingSystem, config.OS.Architecture = os, architecture
 
 	api.Auth()
 
-	getminer.UbubntuGetMiner()
+	getminer.GetMiner()
 	gpusArray := gpuwrk.SearchGpus()
 
 	mlog.LogPass()

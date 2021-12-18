@@ -23,9 +23,11 @@ package gpuwrk
 
 import (
 	"bytes"
+	"errors"
 	"miningPoolCli/config"
 	"miningPoolCli/utils/mlog"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -63,11 +65,27 @@ func LogGpuList(gpus []GPUstruct) {
 }
 
 func searchGpusWithRegex() ([]GPUstruct, error) {
-	cmd := exec.Command("./" + config.MinerGetter.MinerDirectory + "/pow-miner-opencl")
+	var cmd *exec.Cmd
+
+	var execP string
+	switch config.OS.OperatingSystem {
+	case config.OSType.Linux:
+		execP = "./" + filepath.Join(config.MinerGetter.MinerDirectory, config.MinerGetter.UbuntuSettings.ExecutableName)
+
+	case config.OSType.Win:
+		execP = filepath.Join(config.MinerGetter.MinerDirectory + config.MinerGetter.WinSettings.ExecutableName)
+	default:
+		mlog.LogFatal("searchGpusWithRegex(): error OS")
+	}
+
+	cmd = exec.Command(execP)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
-	cmd.Start()
+
+	if err := cmd.Start(); err != nil {
+		mlog.LogFatalStackError(err)
+	}
 	cmd.Wait()
 
 	matches := config.MRgxKit.FindGPUPat.FindAllString(stderr.String(), -1)
@@ -80,9 +98,18 @@ func searchGpusWithRegex() ([]GPUstruct, error) {
 		)
 
 		panddId := config.MRgxKit.FindIntIds.FindAllString(v, -1)
-		// TODO: handle errors
-		platformId, _ := strconv.Atoi(strings.Replace(panddId[0], "#", "", -1))
-		deviceId, _ := strconv.Atoi(strings.Replace(panddId[1], "#", "", -1))
+		if len(panddId) < 2 {
+			return gpusArray, errors.New("can't search GPU - len(panddId) < 2; panddId: " + strings.Join(panddId, ", "))
+		}
+
+		platformId, err := strconv.Atoi(strings.Replace(panddId[0], "#", "", -1))
+		if err != nil {
+			return gpusArray, errors.New("can't get platformId: " + err.Error())
+		}
+		deviceId, err := strconv.Atoi(strings.Replace(panddId[1], "#", "", -1))
+		if err != nil {
+			return gpusArray, errors.New("can't get deviceId: " + err.Error())
+		}
 
 		gpusArray = append(
 			gpusArray,
@@ -94,9 +121,17 @@ func searchGpusWithRegex() ([]GPUstruct, error) {
 		)
 	}
 
+	if len(gpusArray) < 1 {
+		return gpusArray, errors.New("no any GPUs found")
+	}
+
 	return gpusArray, nil
 }
+
 func SearchGpus() []GPUstruct {
-	nvidiaGpus, _ := searchGpusWithRegex()
+	nvidiaGpus, err := searchGpusWithRegex()
+	if err != nil {
+		mlog.LogFatal(err.Error())
+	}
 	return nvidiaGpus
 }

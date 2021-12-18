@@ -43,6 +43,6 @@ func GetDir(path string) []string {
 
 func RemovePath(strDir string) {
 	if err := os.RemoveAll(strDir); err != nil {
-		mlog.LogFatalStackError(err)
+		mlog.LogFatal("error: RemovePath(): " + err.Error())
 	}
 }
