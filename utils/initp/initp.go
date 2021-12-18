@@ -59,7 +59,7 @@ func InitProgram() []gpuwrk.GPUstruct {
 	os, architecture := runtime.GOOS, runtime.GOARCH
 
 	if os == config.OSType.Win {
-		mlog.LogFatal("Unsupported OS detected: " + "Windows")
+		mlog.LogOk("Supported OS detected: " + os + "/" + architecture)
 	} else if os == config.OSType.Macos {
 		mlog.LogFatal("Unsupported OS detected: " + "Mac OS")
 	} else if os == config.OSType.Linux && architecture == "amd64" {
