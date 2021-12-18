@@ -92,6 +92,7 @@ func ExtractZip(filename string, dst string) {
 	defer archive.Close()
 
 	for _, f := range archive.File {
+		fmt.Println(f.Name)
 		filePath := filepath.Join(dst, f.Name)
 		fmt.Println("unzipping file ", filePath)
 
