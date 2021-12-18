@@ -101,11 +101,12 @@ func checkTaskAlreadyFound(checkId int) bool {
 func syncTasks(firstSync *chan struct{}) {
 	var firstSyncIsOk bool
 	for {
-		globalTasks = api.GetTasks().Tasks
-
-		if len(globalTasks) > 0 && !firstSyncIsOk {
-			*firstSync <- struct{}{}
-			firstSyncIsOk = true
+		if t := api.GetTasks().Tasks; len(t) > 0 {
+			globalTasks = t
+			if !firstSyncIsOk {
+				*firstSync <- struct{}{}
+				firstSyncIsOk = true
+			}
 		}
 
 		time.Sleep(1 * time.Second)
