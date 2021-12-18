@@ -23,6 +23,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"miningPoolCli/config"
 	"miningPoolCli/utils/mlog"
 )
@@ -51,7 +52,7 @@ func Auth() {
 
 	err := json.Unmarshal(bodyResp, &serverResp)
 	if err != nil {
-		mlog.LogFatal(err.Error())
+		mlog.LogFatalStackError(err)
 	}
 
 	if serverResp.User.Id != 0 {
@@ -92,7 +93,9 @@ func GetTasks() GetTasksResponse {
 	var results GetTasksResponse
 
 	if err := json.Unmarshal(bodyResp, &results); err != nil {
-		mlog.LogFatal(err.Error())
+		mlog.LogError(err.Error())
+		mlog.LogError("can not unmarshal JSON GetTasks()")
+		mlog.LogError("bodyResp: " + string(bodyResp))
 	}
 
 	return results
@@ -104,7 +107,7 @@ type SendHexBocToServerResponse struct {
 	Complexity string `json:"complexity"`
 }
 
-func SendHexBocToServer(hexData string, seed string, taskId string) SendHexBocToServerResponse {
+func SendHexBocToServer(hexData string, seed string, taskId string) (SendHexBocToServerResponse, error) {
 	jsonData, _ := json.Marshal(map[string]string{
 		"hexData":    hexData,
 		"dataSource": "minerClient",
@@ -121,8 +124,12 @@ func SendHexBocToServer(hexData string, seed string, taskId string) SendHexBocTo
 
 	var results SendHexBocToServerResponse
 	if err := json.Unmarshal(bodyResp, &results); err != nil {
-		mlog.LogFatalStackError(err)
+		mlog.LogError(err.Error())
+		mlog.LogError("Can not unmarshal JSON SendHexBocToServer()")
+		mlog.LogError("bodyResp: " + string(bodyResp))
+
+		return results, errors.New("can not unmarshal json SendHexBocToServer()")
 	}
 
-	return results
+	return results, nil
 }

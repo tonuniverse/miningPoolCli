@@ -58,11 +58,13 @@ func startTask(i int, task api.Task) {
 			if !killedByNotActual {
 				bocFileInHex, _ := boc.ReadBocFileToHex(pathToBoc)
 
-				bocServerResp := api.SendHexBocToServer(bocFileInHex, task.Seed, strconv.Itoa(task.Id))
-				if bocServerResp.Data == "Found" && bocServerResp.Status == "ok" {
-					logreport.ShareFound(gpuGoroutines[i].GpuData.Model, gpuGoroutines[i].GpuData.GpuId, task.Id)
-				} else {
-					logreport.ShareServerError(task, bocServerResp, gpuGoroutines[i].GpuData.GpuId)
+				bocServerResp, err := api.SendHexBocToServer(bocFileInHex, task.Seed, strconv.Itoa(task.Id))
+				if err == nil {
+					if bocServerResp.Data == "Found" && bocServerResp.Status == "ok" {
+						logreport.ShareFound(gpuGoroutines[i].GpuData.Model, gpuGoroutines[i].GpuData.GpuId, task.Id)
+					} else {
+						logreport.ShareServerError(task, bocServerResp, gpuGoroutines[i].GpuData.GpuId)
+					}
 				}
 			}
 			files.RemovePath(pathToBoc)
