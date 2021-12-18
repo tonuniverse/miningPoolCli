@@ -4,8 +4,6 @@ Open-source mining pool client
 
 To use with tonuniverse mining pool, follow the instructions at https://tonuniverse.com
 
-The text of the license can be obtained in the file "LICENSE".
-
 ## Source code
 
 You can always get the source code from the github repository page:
@@ -55,4 +53,10 @@ This script will automatically compile the source code for the required OS, set 
 Usage: 
 
 	./do-release.sh {linux|windows}
+
+## LICENSE
+
+GPL-3.0 License
+
+The text of the license can be obtained in the file "LICENSE"
 
