@@ -46,7 +46,7 @@ Run `./miningPoolCli` with flags:
 
 ## Do release
 
-To generate a new release, use `do-release.sh"`.
+To generate a new release, use `do-release.sh`.
 
 This script will automatically compile the source code for the required OS, set the version from the `config/version.go` and create an archive
 
