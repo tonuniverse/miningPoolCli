@@ -85,7 +85,7 @@ func ExtractTarGz(gzipStream io.Reader, pathToExtarct string) {
 }
 
 func ExtractZip(filename string, dst string) {
-	archive, err := zip.OpenReader("archive.zip")
+	archive, err := zip.OpenReader(filename)
 	if err != nil {
 		panic(err)
 	}
