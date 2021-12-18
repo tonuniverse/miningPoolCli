@@ -25,7 +25,6 @@ import (
 	"archive/tar"
 	"archive/zip"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"log"
 	"miningPoolCli/utils/mlog"
@@ -84,6 +83,7 @@ func ExtractTarGz(gzipStream io.Reader, pathToExtarct string) {
 	}
 }
 
+// Extract ZIP files, but skip all directories in zip
 func ExtractZip(filename string, dst string) {
 	archive, err := zip.OpenReader(filename)
 	if err != nil {
@@ -92,36 +92,26 @@ func ExtractZip(filename string, dst string) {
 	defer archive.Close()
 
 	for _, f := range archive.File {
-		fmt.Println(f.Name)
 		filePath := filepath.Join(dst, f.Name)
-		fmt.Println("unzipping file ", filePath)
 
 		if !strings.HasPrefix(filePath, filepath.Clean(dst)+string(os.PathSeparator)) {
-			fmt.Println("invalid file path")
+			mlog.LogError("ExtractZip invalid file path: " + filePath)
 			return
 		}
-		if f.FileInfo().IsDir() {
-			fmt.Println("creating directory...")
-			os.MkdirAll(filePath, os.ModePerm)
-			continue
-		}
 
-		if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
-			panic(err)
-		}
-
-		dstFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+		c := filepath.Join(dst, filepath.Base(filePath))
+		dstFile, err := os.OpenFile(c, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
 		if err != nil {
 			panic(err)
 		}
 
 		fileInArchive, err := f.Open()
 		if err != nil {
-			panic(err)
+			mlog.LogFatalStackError(err)
 		}
 
 		if _, err := io.Copy(dstFile, fileInArchive); err != nil {
-			panic(err)
+			mlog.LogFatalStackError(err)
 		}
 
 		dstFile.Close()

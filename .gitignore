@@ -15,6 +15,7 @@ test
 serveraddr.txt
 
 # --------------------- build ---------------------
+*.zip
 *.tar.gz
 miningPoolCli*
 
