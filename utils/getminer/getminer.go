@@ -68,11 +68,17 @@ func UbubntuGetMiner() {
 		mlog.LogFatal(err.Error())
 	}
 
-	r, err := os.Open(minerFileName)
-	if err != nil {
-		fmt.Println(err)
+	switch config.OS.OperatingSystem {
+	case config.OSType.Linux:
+		r, err := os.Open(minerFileName)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		helpers.ExtractTarGz(r, config.MinerGetter.MinerDirectory)
+	case config.OSType.Win:
+		helpers.ExtractZip(minerFileName, config.MinerGetter.MinerDirectory)
 	}
-	helpers.ExtractTarGz(r, config.MinerGetter.MinerDirectory)
 
 	if config.OS.OperatingSystem == config.OSType.Linux {
 		os.Chmod(config.MinerGetter.MinerDirectory+"/"+executableName, 0700)
