@@ -27,20 +27,21 @@ func startTask(i int, task api.Task) {
 	mineResultFilename := "mined_" + strconv.Itoa(task.Id) + ".boc"
 	pathToBoc := config.MinerGetter.MinerDirectory + "/" + mineResultFilename
 
-	cmd := exec.Command(
-		"./"+config.MinerGetter.MinerDirectory+"/pow-miner-opencl", "-vv",
-		"-g"+strconv.Itoa(gpuGoroutines[i].GpuData.GpuId),
-		"-p"+strconv.Itoa(gpuGoroutines[i].GpuData.PlatformId),
-		"-F"+strconv.Itoa(config.StaticBeforeMinerSettings.BoostFactor),
-		"-t"+strconv.Itoa(config.StaticBeforeMinerSettings.TimeoutT),
+	minerArgs := []string{
+		"-vv",
+		"-g" + strconv.Itoa(gpuGoroutines[i].GpuData.GpuId),
+		"-p" + strconv.Itoa(gpuGoroutines[i].GpuData.PlatformId),
+		"-F" + strconv.Itoa(config.StaticBeforeMinerSettings.BoostFactor),
+		"-t" + strconv.Itoa(config.StaticBeforeMinerSettings.TimeoutT),
 		config.StaticBeforeMinerSettings.PoolAddress,
 		helpers.ConvertHexData(task.Seed),
 		helpers.ConvertHexData(task.Complexity),
 		config.StaticBeforeMinerSettings.Iterations,
 		task.Giver,
 		pathToBoc,
-	)
+	}
 
+	cmd := exec.Command(config.MinerGetter.StartPath, minerArgs...)
 	cmd.Stderr = &gpuGoroutines[i].ProcStderr
 
 	unblockFunc := make(chan struct{}, 1)

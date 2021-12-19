@@ -30,6 +30,7 @@ import (
 	"miningPoolCli/utils/gpuwrk"
 	"miningPoolCli/utils/mlog"
 	"os"
+	"path/filepath"
 	"runtime"
 )
 
@@ -65,6 +66,21 @@ func InitProgram() []gpuwrk.GPUstruct {
 	}
 
 	mlog.LogInfo("Using mining pool API url: " + config.ServerSettings.MiningPoolServerURL)
+
+	switch config.OS.OperatingSystem {
+	case config.OSType.Linux:
+		config.MinerGetter.CurrExecName = config.MinerGetter.UbuntuSettings.ExecutableName
+		config.MinerGetter.ExecNamePref = "./"
+	case config.OSType.Win:
+		config.MinerGetter.CurrExecName = config.MinerGetter.WinSettings.ExecutableName
+		config.MinerGetter.ExecNamePref = ""
+	}
+
+	config.MinerGetter.StartPath = filepath.Join(
+		config.MinerGetter.ExecNamePref,
+		config.MinerGetter.MinerDirectory,
+		config.MinerGetter.CurrExecName,
+	)
 
 	api.Auth()
 

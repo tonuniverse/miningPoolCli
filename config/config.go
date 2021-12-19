@@ -40,6 +40,9 @@ type minerGetter struct {
 	WinSettings struct {
 		ReleaseURL, FileName, ExecutableName string
 	}
+	ExecNamePref string // "./" in linux; "" in win
+	CurrExecName string // current ExecutableName (depends on OS)
+	StartPath    string // depends on OS
 }
 
 type os struct {

@@ -27,7 +27,6 @@ import (
 	"miningPoolCli/config"
 	"miningPoolCli/utils/mlog"
 	"os/exec"
-	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -65,20 +64,7 @@ func LogGpuList(gpus []GPUstruct) {
 }
 
 func searchGpusWithRegex() ([]GPUstruct, error) {
-	var cmd *exec.Cmd
-
-	var execP string
-	switch config.OS.OperatingSystem {
-	case config.OSType.Linux:
-		execP = "./" + filepath.Join(config.MinerGetter.MinerDirectory, config.MinerGetter.UbuntuSettings.ExecutableName)
-
-	case config.OSType.Win:
-		execP = filepath.Join(config.MinerGetter.MinerDirectory + config.MinerGetter.WinSettings.ExecutableName)
-	default:
-		mlog.LogFatal("searchGpusWithRegex(): error OS")
-	}
-
-	cmd = exec.Command(execP)
+	cmd := exec.Command(config.MinerGetter.StartPath)
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
