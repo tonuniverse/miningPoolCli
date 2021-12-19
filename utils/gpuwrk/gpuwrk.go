@@ -43,6 +43,8 @@ type GpuGoroutine struct {
 	CurrentHashrate int
 
 	ProcStderr bytes.Buffer
+	PPid       int
+	KeepAlive  bool
 }
 
 func LogGpuList(gpus []GPUstruct) {

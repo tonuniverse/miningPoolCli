@@ -14,7 +14,7 @@ func Entrypoint(gpuData *[]gpuwrk.GpuGoroutine) {
 	http.HandleFunc("/stat", statHandler(gpuData))
 
 	if config.NetSrv.HandleKill {
-		http.HandleFunc("/kill", killHandler())
+		http.HandleFunc("/kill", killHandler(gpuData))
 		mlog.LogInfo("Set kill http handler at /kill")
 	}
 

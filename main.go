@@ -53,6 +53,9 @@ func startTask(i int, task api.Task) {
 		mlog.LogFatal("failed to start miner cmd; err: " + err.Error() + "; args: " + strings.Join(cmd.Args, " "))
 	}
 
+	gpuGoroutines[i].PPid = cmd.Process.Pid
+	gpuGoroutines[i].KeepAlive = true
+
 	go func() {
 		cmd.Wait()
 		done = true
@@ -73,7 +76,11 @@ func startTask(i int, task api.Task) {
 			}
 			files.RemovePath(pathToBoc)
 		}
-		enableTask(i)
+		// fmt.Println("gpu: " + strconv.Itoa(i) + "; KeepAlive: " + strconv.FormatBool(gpuGoroutines[i].KeepAlive))
+		if gpuGoroutines[i].KeepAlive {
+			enableTask(i)
+		}
+
 		unblockFunc <- struct{}{}
 	}()
 
