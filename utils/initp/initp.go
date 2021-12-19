@@ -45,7 +45,8 @@ func InitProgram() []gpuwrk.GPUstruct {
 	flag.StringVar(&config.ServerSettings.MiningPoolServerURL, "url", "https://pool.tonuniverse.com", "")
 	flag.BoolVar(&config.UpdateStatsFile, "stats", false, "") // for Hive OS
 
-	flag.BoolVar(&config.NetSrv.RunThis, "serve-stat", false, "") // run http server with miner stat
+	flag.BoolVar(&config.NetSrv.RunThis, "serve-stat", false, "")     // run http server with miner stat
+	flag.BoolVar(&config.NetSrv.HandleKill, "handle-kill", false, "") // handle /kill (os.Exit by http)
 
 	flag.Parse()
 	config.OS.OperatingSystem, config.OS.Architecture = runtime.GOOS, runtime.GOARCH

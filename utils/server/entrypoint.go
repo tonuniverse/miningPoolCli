@@ -12,6 +12,12 @@ import (
 
 func Entrypoint(gpuData *[]gpuwrk.GpuGoroutine) {
 	http.HandleFunc("/stat", statHandler(gpuData))
+
+	if config.NetSrv.HandleKill {
+		http.HandleFunc("/kill", killHandler())
+		mlog.LogInfo("Set kill http handler at /kill")
+	}
+
 	listener, err := net.Listen("tcp", config.NetSrv.Host+":0")
 	if err != nil {
 		mlog.LogError("Failed to get tcp")
@@ -24,7 +30,7 @@ func Entrypoint(gpuData *[]gpuwrk.GpuGoroutine) {
 	}
 	mlog.LogInfo("Server addr saved to: " + config.NetSrv.HostFileName)
 
-	mlog.LogInfo("Statistics server: " + hostPort)
+	mlog.LogInfo("Server at: " + hostPort)
 	if err := http.Serve(listener, nil); err != nil {
 		mlog.LogFatalStackError(err)
 	}

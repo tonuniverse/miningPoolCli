@@ -69,11 +69,12 @@ type minerRegexKit struct {
 	FindIntIds, FindHashRate, FindDecimal *regexp.Regexp
 }
 
-// miner stat server config
+// miner server config
 type netServer struct {
 	Host         string
 	HostFileName string
 	RunThis      bool
+	HandleKill   bool
 }
 
 var Colors colors

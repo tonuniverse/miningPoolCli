@@ -76,5 +76,11 @@ under certain conditions; read LICENSE for details.`
 	Accepts GET and POST methods. Returns the miner's statistics in 
 	JSON format. The HTTP port is automatically selected and will be 
 	printed in the terminal and written to the "` + NetSrv.HostFileName + `" file
+
+-handle-kill bool
+
+	Allows you to process HTTP requests to "/kill" to force the 
+	client to terminate. The flag is applied only if 
+	-serve-stat was previously specified
 `
 }

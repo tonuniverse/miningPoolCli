@@ -44,6 +44,12 @@ Run `./miningPoolCli` with flags:
 	JSON format. The HTTP port is automatically selected and will be 
 	printed in the terminal and written to the "serveraddr.txt" file
 
+`-handle-kill` bool
+
+	Allows you to process HTTP requests to "/kill" to force the 
+	client to terminate. The flag is applied only if 
+	-serve-stat was previously specified
+
 ## Do release
 
 To generate a new release, use `do-release.sh`.

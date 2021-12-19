@@ -140,7 +140,9 @@ func main() {
 		enableTask(gpuGoIndex)
 	}
 
-	if config.NetSrv.RunThis {
+	if !config.NetSrv.RunThis && config.NetSrv.HandleKill {
+		mlog.LogInfo("Unable to apply -handle-kill because flag -serve-stat is not specified")
+	} else if config.NetSrv.RunThis {
 		go server.Entrypoint(&gpuGoroutines)
 	}
 
