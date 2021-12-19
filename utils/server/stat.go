@@ -19,8 +19,7 @@ func statHandler(gpuData *[]gpuwrk.GpuGoroutine) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 
 		if r.Method != "GET" && r.Method != "POST" {
-			jsonResp, _ := json.Marshal(map[string]interface{}{"error": "StatusMethodNotAllowed", "code": 405})
-			http.Error(w, string(jsonResp), http.StatusMethodNotAllowed)
+			http.Error(w, string(errJson.MethodNotAllowed), http.StatusMethodNotAllowed)
 			return
 		}
 
