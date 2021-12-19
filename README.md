@@ -46,9 +46,9 @@ Run `./miningPoolCli` with flags:
 
 `-handle-kill` bool
 
-	Allows you to process HTTP requests to "/kill" to force the 
-	client to terminate. The flag is applied only if 
-	-serve-stat was previously specified
+	Allows server to process HTTP requests to "/kill" to 
+	force the client to terminate. The flag is applied 
+	only if -serve-stat was previously specified
 
 ## Do release
 
