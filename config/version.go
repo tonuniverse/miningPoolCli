@@ -21,4 +21,4 @@ along with miningPoolCli.  If not, see <https://www.gnu.org/licenses/>.
 
 package config
 
-var BuildVersion string = "2.1.6"
+var BuildVersion string = "2.1.7"

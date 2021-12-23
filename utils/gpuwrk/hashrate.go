@@ -15,6 +15,7 @@ func CalcHashrate(gpus *[]GpuGoroutine) {
 
 	for i, v := range *gpus {
 		hsArr := config.MRgxKit.FindHashRate.FindAllString(v.ProcStderr.String(), -1)
+
 		if len(hsArr) < 2 {
 			return
 		}

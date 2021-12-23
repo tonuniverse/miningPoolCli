@@ -42,6 +42,8 @@ func startTask(i int, task api.Task) {
 	}
 
 	cmd := exec.Command(config.MinerGetter.StartPath, minerArgs...)
+
+	gpuGoroutines[i].ProcStderr.Reset()
 	cmd.Stderr = &gpuGoroutines[i].ProcStderr
 
 	unblockFunc := make(chan struct{}, 1)

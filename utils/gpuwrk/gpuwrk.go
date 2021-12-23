@@ -86,13 +86,14 @@ func searchGpusWithRegex() ([]GPUstruct, error) {
 		)
 
 		// skip for integrated intel GPU
-		if strings.Contains(gpuModel, "intel") {
+		if strings.Contains(strings.ToLower(gpuModel), "intel") {
 			continue
 		}
 
 		panddId := config.MRgxKit.FindIntIds.FindAllString(v, -1)
 		if len(panddId) < 2 {
-			return gpusArray, errors.New("can't search GPU - len(panddId) < 2; panddId: " + strings.Join(panddId, ", "))
+			mlog.LogInfo("warn: can't search GPU - len(panddId) < 2; panddId: " + strings.Join(panddId, ", ") + "; v: " + v)
+			continue
 		}
 
 		platformId, err := strconv.Atoi(strings.Replace(panddId[0], "#", "", -1))
