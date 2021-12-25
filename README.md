@@ -1,5 +1,8 @@
 ## miningPoolCli
 
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/tonuniverse/miningPoolCli)
+![GitHub](https://img.shields.io/github/license/tonuniverse/miningPoolCli)
+
 Open-source mining pool client
 
 To use with tonuniverse mining pool, follow the instructions at https://tonuniverse.com
