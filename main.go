@@ -33,6 +33,7 @@ func startTask(i int, task api.Task) {
 		"-p" + strconv.Itoa(gpuGoroutines[i].GpuData.PlatformId),
 		"-F" + strconv.Itoa(config.StaticBeforeMinerSettings.BoostFactor),
 		"-t" + strconv.Itoa(config.StaticBeforeMinerSettings.TimeoutT),
+		"-e" + strconv.FormatInt(task.Expire, 10),
 		config.StaticBeforeMinerSettings.PoolAddress,
 		helpers.ConvertHexData(task.Seed),
 		helpers.ConvertHexData(task.Complexity),
@@ -40,7 +41,6 @@ func startTask(i int, task api.Task) {
 		task.Giver,
 		pathToBoc,
 	}
-
 	cmd := exec.Command(config.MinerGetter.StartPath, minerArgs...)
 
 	gpuGoroutines[i].ProcStderr.Reset()

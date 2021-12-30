@@ -76,6 +76,7 @@ type Task struct {
 	Seed       string `json:"seed"`
 	Complexity string `json:"new_complexity"`
 	Giver      string `json:"address"`
+	Expire     int64  `json:"expire"`
 }
 
 type GetTasksResponse struct {
