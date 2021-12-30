@@ -64,21 +64,22 @@ func startTask(i int, task api.Task) {
 
 		if helpers.StringInSlice(mineResultFilename, files.GetDir(config.MinerGetter.MinerDirectory)) {
 			// found
+			bocFileInHex, _ := boc.ReadBocFileToHex(pathToBoc)
 			if !killedByNotActual {
-				bocFileInHex, _ := boc.ReadBocFileToHex(pathToBoc)
-
-				bocServerResp, err := api.SendHexBocToServer(bocFileInHex, task.Seed, strconv.Itoa(task.Id))
-				if err == nil {
-					if bocServerResp.Data == "Found" && bocServerResp.Status == "ok" {
-						logreport.ShareFound(gpuGoroutines[i].GpuData.Model, gpuGoroutines[i].GpuData.GpuId, task.Id)
-					} else {
-						logreport.ShareServerError(task, bocServerResp, gpuGoroutines[i].GpuData.GpuId)
+				go func() {
+					bocServerResp, err := api.SendHexBocToServer(bocFileInHex, task.Seed, strconv.Itoa(task.Id))
+					if err == nil {
+						if bocServerResp.Data == "Found" && bocServerResp.Status == "ok" {
+							logreport.ShareFound(gpuGoroutines[i].GpuData.Model, gpuGoroutines[i].GpuData.GpuId, task.Id)
+						} else {
+							logreport.ShareServerError(task, bocServerResp, gpuGoroutines[i].GpuData.GpuId)
+						}
 					}
-				}
+				}()
 			}
 			files.RemovePath(pathToBoc)
 		}
-		// fmt.Println("gpu: " + strconv.Itoa(i) + "; KeepAlive: " + strconv.FormatBool(gpuGoroutines[i].KeepAlive))
+
 		if gpuGoroutines[i].KeepAlive {
 			enableTask(i)
 		}
@@ -95,7 +96,7 @@ func startTask(i int, task api.Task) {
 				}
 				break
 			}
-			time.Sleep(128 * time.Microsecond)
+			time.Sleep(10 * time.Microsecond)
 		}
 	}()
 
