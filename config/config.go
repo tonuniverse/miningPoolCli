@@ -121,22 +121,22 @@ func Configure() {
 	MinerGetter.MinerDirectory = "__miner__"
 
 	// -------- set Release for Ubuntu
-	MinerGetter.UbuntuSettings.FileName = "minertools-opencl-ubuntu-18.04-x86-64.tar.gz"
-	MinerGetter.UbuntuSettings.ReleaseURL = "https://github.com/tontechio/pow-miner-gpu/releases/download/20211216.2/" +
+	MinerGetter.UbuntuSettings.FileName = "minertools-opencl-ubuntu-20.04-x86-64.tar.gz"
+	MinerGetter.UbuntuSettings.ReleaseURL = "https://github.com/tontechio/pow-miner-gpu/releases/download/20211230.1/" +
 		MinerGetter.UbuntuSettings.FileName
 	MinerGetter.UbuntuSettings.ExecutableName = "pow-miner-opencl"
 	// --------
 
 	// -------- set Release for Win
 	MinerGetter.WinSettings.FileName = "minertools-opencl-windows-x86-64.zip"
-	MinerGetter.WinSettings.ReleaseURL = "https://github.com/tontechio/pow-miner-gpu/releases/download/20211216.2/" +
+	MinerGetter.WinSettings.ReleaseURL = "https://github.com/tontechio/pow-miner-gpu/releases/download/20211230.1/" +
 		MinerGetter.WinSettings.FileName
 	MinerGetter.WinSettings.ExecutableName = "pow-miner-opencl.exe"
 	// --------
 
 	// -------- StaticBeforeMinerSettings
 	StaticBeforeMinerSettings = staticBeforeMinerSettings{
-		BoostFactor: 256,
+		BoostFactor: 2048,
 		Iterations:  "100000000000",
 		TimeoutT:    256,
 	}
