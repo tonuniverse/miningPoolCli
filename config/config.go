@@ -136,7 +136,7 @@ func Configure() {
 
 	// -------- StaticBeforeMinerSettings
 	StaticBeforeMinerSettings = staticBeforeMinerSettings{
-		BoostFactor: 2048,
+		BoostFactor: 512,
 		Iterations:  "9223372036854775807",
 		TimeoutT:    256,
 	}
