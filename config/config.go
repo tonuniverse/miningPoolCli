@@ -121,7 +121,7 @@ func Configure() {
 	MinerGetter.MinerDirectory = "__miner__"
 
 	// -------- set Release for Ubuntu
-	MinerGetter.UbuntuSettings.FileName = "minertools-opencl-ubuntu-20.04-x86-64.tar.gz"
+	MinerGetter.UbuntuSettings.FileName = "minertools-opencl-ubuntu-18.04-x86-64.tar.gz"
 	MinerGetter.UbuntuSettings.ReleaseURL = "https://github.com/tontechio/pow-miner-gpu/releases/download/20211230.1/" +
 		MinerGetter.UbuntuSettings.FileName
 	MinerGetter.UbuntuSettings.ExecutableName = "pow-miner-opencl"

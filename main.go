@@ -157,7 +157,7 @@ func main() {
 	}
 
 	for {
-		time.Sleep(60 * time.Second)
+		time.Sleep(10 * time.Second)
 		gpuwrk.CalcHashrate(&gpuGoroutines)
 	}
 }
